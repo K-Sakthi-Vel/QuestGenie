@@ -26,7 +26,8 @@ export default function PDFToolbar() {
             const form = new FormData()
             form.append('file', fileObj)
 
-            const resp = await fetch('/api/upload', { method: 'POST', body: form })
+            const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000'
+            const resp = await fetch(`${API_BASE}/api/upload`, { method: 'POST', body: form })
             if (!resp.ok) {
                 const txt = await resp.text()
                 throw new Error(txt || `Upload failed: ${resp.status}`)
