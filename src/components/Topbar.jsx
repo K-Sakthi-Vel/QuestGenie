@@ -3,9 +3,10 @@ import { useUI } from '../contexts/UIContext'
 import { usePdf } from '../contexts/PdfContext'
 import { useQuiz } from '../contexts/QuizContext'
 import Button from './primitives/Button'
+import { putPdf } from '../utils/idbHelper' // Import IndexedDB putPdf
 
 export default function Topbar() {
-    const { setSidebarOpen, setActiveView } = useUI() // Get setActiveView here
+    const { setSidebarOpen, setActiveView, activeView } = useUI() // Get setActiveView here
     const { addFile, setActiveFile } = usePdf()
     const { setCurrentQuiz } = useQuiz()
     const [isGenerating, setIsGenerating] = useState(false)
@@ -14,22 +15,33 @@ export default function Topbar() {
         const files = event.target.files;
         if (files.length > 0) {
             const file = files[0];
-            console.log('Uploaded file:', file);
+            console.log('Uploaded file from Topbar:', file);
 
-            // Add the file to PdfContext
-            const newFile = {
-                id: `uploaded-${Date.now()}`,
-                title: file.name,
-                pages: undefined,
-                size: file.size,
-                _file: file,
-                preview: URL.createObjectURL(file), // Add preview URL
-            };
-            addFile(newFile);
-            // make this file active so toolbar can use it
-            setActiveFile(newFile);
-            // Switch to PDF workspace view
-            setActiveView('pdf-workspace'); // Use setActiveView from the top level
+            try {
+                const fileId = `uploaded-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+                console.log("Topbar: Attempting to put PDF to IndexedDB:", { key: fileId, name: file.name, blob: file })
+                await putPdf({ key: fileId, name: file.name, blob: file })
+                console.log("Topbar: PDF successfully put to IndexedDB:", fileId)
+
+                // Add the file to PdfContext
+                const newFile = {
+                    id: fileId,
+                    title: file.name,
+                    pages: undefined, // This will be populated by PDFViewer or similar component
+                    size: file.size,
+                    preview: URL.createObjectURL(file), // Create object URL for immediate preview
+                    blobKey: fileId, // Store key to retrieve blob later
+                };
+                console.log("Topbar: New file object created for PdfContext:", newFile)
+                addFile(newFile);
+                // make this file active so toolbar can use it
+                setActiveFile(newFile);
+                // Switch to PDF workspace view
+                setActiveView('pdf-workspace'); // Use setActiveView from the top level
+            } catch (error) {
+                console.error("Topbar: Error processing file:", file.name, error)
+                alert("Error uploading PDF: " + (error.message || String(error)))
+            }
         }
     };
 
@@ -56,8 +68,6 @@ export default function Topbar() {
             </div>
 
             <div className="flex items-center gap-3">
-                <div className="hidden sm:block text-sm text-gray-600">Progress: <strong>72%</strong></div>
-
                 {/* Hidden file input for uploading PDFs */}
                 <input
                     type="file"
@@ -67,12 +77,16 @@ export default function Topbar() {
                     onChange={handleFileUpload}
                 />
 
-                <Button
-                    onClick={() => document.getElementById('topbar-upload-input').click()}
-                    disabled={isGenerating}
-                >
-                    {isGenerating ? 'Generating...' : 'Upload PDF'}
-                </Button>
+                {
+                    (activeView === 'pdf-workspace' || activeView === 'questionnaire') && (
+                        <Button
+                            onClick={() => document.getElementById('topbar-upload-input').click()}
+                            disabled={isGenerating}
+                        >
+                            {isGenerating ? 'Generating...' : 'Upload PDF'}
+                        </Button>)
+                }
+
             </div>
         </div>
     )

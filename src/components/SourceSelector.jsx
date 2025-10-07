@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import SourceItem from './SourceItem'
 import { usePdf } from '../contexts/PdfContext'
+import { putPdf } from '../utils/idbHelper' // Import IndexedDB putPdf
 
 // SourceSelector
 // - Displays a seeded list of NCERT Class XI Physics PDFs
 // - Allows uploading PDFs (mocked locally) and selecting between "All Uploaded PDFs" or a specific PDF
-// - Props: initialFiles (array), onSelect(fileOrMode), onUpload(file)
-export default function SourceSelector({ initialFiles = [], onSelect = () => {}, onUpload = () => {} }) {
-    const { files: ctxFiles = [], setActiveFile } = usePdf()
+// - Props: initialFiles (array), onSelect(fileOrMode)
+export default function SourceSelector({ initialFiles = [], onSelect = () => {} }) {
+    const { files: ctxFiles = [], activeFile, setActiveFile, addFile } = usePdf()
 
     // Seeded NCERT Class XI Physics PDFs (display-only sample data)
     const seeded = useMemo(
@@ -33,62 +34,56 @@ export default function SourceSelector({ initialFiles = [], onSelect = () => {},
     }, [initialFiles, ctxFiles, seeded])
 
     const [mode, setMode] = useState('all') // 'all' | 'single'
-    const [selectedId, setSelectedId] = useState(combinedFiles.length ? combinedFiles[0].id : null)
+    const [selectedId, setSelectedId] = useState(activeFile ? activeFile.id : (combinedFiles.length ? combinedFiles[0].id : null))
 
-    function handleFileInput(e) {
+    // Update selectedId when activeFile changes
+    useEffect(() => {
+        if (activeFile) {
+            setSelectedId(activeFile.id)
+            setMode('single')
+        } else if (combinedFiles.length > 0) {
+            setSelectedId(combinedFiles[0].id)
+            setMode('single')
+        } else {
+            setSelectedId(null)
+        }
+    }, [activeFile, combinedFiles])
+
+
+    async function handleFileInput(e) {
         const list = Array.from(e.target.files || [])
         if (list.length === 0) return
 
-        // Create light-weight mock file objects for UI (real upload integrated later)
-        const newFiles = list.map((file) => {
-            const id = `uploaded-${Date.now()}-${Math.floor(Math.random() * 10000)}`
-            return {
-                id,
-                title: file.name,
-                pages: undefined,
-                size: file.size,
-                _file: file,
-                preview: URL.createObjectURL(file), // Add preview URL for uploaded files
+        for (const file of list) {
+            try {
+                const fileId = `uploaded-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+                console.log("Attempting to put PDF to IndexedDB:", { key: fileId, name: file.name, blob: file })
+                await putPdf({ key: fileId, name: file.name, blob: file })
+                console.log("PDF successfully put to IndexedDB:", fileId)
+
+                const newFile = {
+                    id: fileId,
+                    title: file.name,
+                    size: file.size,
+                    preview: URL.createObjectURL(file), // Create object URL for immediate preview
+                    blobKey: fileId, // Store key to retrieve blob later
+                    // pages: will be populated by PDFViewer or similar component
+                }
+                console.log("New file object created for PdfContext:", newFile)
+                addFile(newFile)
+                setActiveFile(newFile)
+                setSelectedId(newFile.id)
+                setMode('single')
+            } catch (error) {
+                console.error("Error processing file:", file.name, error)
             }
-        })
-
-        // If PdfContext exists and has setActiveFile or a files array, prefer passing upload event up
-        newFiles.forEach((nf) => onUpload(nf._file || nf))
-
-        // If the app uses PdfContext we expect the provider to pick up uploads; otherwise update local selection
-        setSelectedId(newFiles[0].id)
-        setMode('single')
-
-        // Generate questions based on the uploaded file
-        generateQuestions(newFiles[0])
-    }
-
-    function generateQuestions(file) {
-        // Mock question generation logic
-        const questions = {
-            mcq: [
-                { id: 1, question: `What is the title of the file?`, options: [file.title, 'Option B', 'Option C'], answer: file.title },
-            ],
-            saq: [
-                { id: 1, question: `Summarize the content of ${file.title}.` },
-            ],
-            laq: [
-                { id: 1, question: `Discuss the importance of ${file.title} in detail.` },
-            ],
         }
-
-        // Debugging log to verify generated questions
-        console.log('Generated questions:', questions)
-
-        // Display questions in the UI (for now, log them)
-        alert(`Questions generated for ${file.title}:\n\nMCQs: ${questions.mcq.length}\nSAQs: ${questions.saq.length}\nLAQs: ${questions.laq.length}`)
     }
 
     function handlePick(file) {
         setSelectedId(file.id)
         setMode('single')
         onSelect(file)
-        // If the app context expects setActiveFile, call it so other parts of the app update
         if (setActiveFile) setActiveFile(file)
     }
 

@@ -13,7 +13,7 @@ export default function SimpleIframePDF({ pdfUrl }) {
   const viewerUrl = `${pdfUrl}#toolbar=1&navpanes=0&view=FitH`;
 
   return (
-    <div className="h-[70vh] bg-white rounded-md shadow-sm border overflow-hidden">
+    <div className="h-[100%] bg-white rounded-md shadow-sm border overflow-hidden">
       <iframe
         title="PDF Preview"
         src={viewerUrl}
