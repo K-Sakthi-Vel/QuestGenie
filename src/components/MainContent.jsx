@@ -32,5 +32,18 @@ export default function MainContent() {
         }
     };
 
-    return <main className="flex-1 p-6">{renderContent()}</main>;
+    return <main className="flex-1">
+        <div className='h-[65px] w-full h-screen border-b bg-gray-50 flex items-center px-6'>
+            {
+                activeView === 'dashboard' && <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+            }
+            {activeView === 'chats' && <h1 className="text-2xl font-bold text-gray-800">Chats</h1>
+            }
+            {activeView === 'questionnaire' && <h1 className="text-2xl font-bold text-gray-800">Questionnaire</h1>
+            }
+            {activeView === 'pdf-workspace' && <h1 className="text-2xl font-bold text-gray-800">PDF Workspace</h1>
+            }
+        </div>
+        {renderContent()}
+        </main>;
 }

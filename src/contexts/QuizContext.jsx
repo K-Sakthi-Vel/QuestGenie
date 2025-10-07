@@ -95,8 +95,25 @@ export function QuizProvider({ children }) {
         setCurrentQuiz(quiz);
     };
 
+    const getScoreForSource = (sourceId) => {
+        const localQuiz = localStorage.getItem(`quiz_${sourceId}`);
+        if (!localQuiz) return null;
+
+        const quiz = JSON.parse(localQuiz);
+        const sourceAnswers = answers[sourceId];
+        if (!sourceAnswers) return null;
+
+        let score = 0;
+        quiz.questions.forEach(q => {
+            if (sourceAnswers[q.id] === q.answer) {
+                score++;
+            }
+        });
+        return score;
+    };
+
     return (
-        <QuizContext.Provider value={{ currentQuiz, setCurrentQuiz: customSetCurrentQuiz, answers, submitAnswer, loading, setLoading, fetchQuizForSource, clearQuiz, clearAnswersForSource }}>
+        <QuizContext.Provider value={{ currentQuiz, setCurrentQuiz: customSetCurrentQuiz, answers, submitAnswer, loading, setLoading, fetchQuizForSource, clearQuiz, clearAnswersForSource, getScoreForSource }}>
             {children}
         </QuizContext.Provider>
     );
