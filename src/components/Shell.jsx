@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Topbar from './Topbar'
 import Sidebar from './Sidebar'
 import MainContent from './MainContent'
@@ -7,15 +7,16 @@ import { useUI } from '../contexts/UIContext'
 
 
 export default function Shell() {
-    const { sidebarOpen } = useUI()
+    const { sidebarOpen, activeView } = useUI()
+
     return (
         <div className="min-h-screen bg-gray-50">
             <Topbar />
             <div className="flex">
                 {sidebarOpen && <Sidebar />}
+                {/* MainContent now handles all view rendering internally */}
                 <MainContent />
             </div>
-            <ChatPanel />
         </div>
     )
 }

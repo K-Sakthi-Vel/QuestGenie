@@ -5,7 +5,7 @@ import { useQuiz } from '../contexts/QuizContext'
 import Button from './primitives/Button'
 
 export default function Topbar() {
-    const { setSidebarOpen } = useUI()
+    const { setSidebarOpen, setActiveView } = useUI() // Get setActiveView here
     const { addFile, setActiveFile } = usePdf()
     const { setCurrentQuiz } = useQuiz()
     const [isGenerating, setIsGenerating] = useState(false)
@@ -23,10 +23,13 @@ export default function Topbar() {
                 pages: undefined,
                 size: file.size,
                 _file: file,
+                preview: URL.createObjectURL(file), // Add preview URL
             };
             addFile(newFile);
             // make this file active so toolbar can use it
             setActiveFile(newFile);
+            // Switch to PDF workspace view
+            setActiveView('pdf-workspace'); // Use setActiveView from the top level
         }
     };
 

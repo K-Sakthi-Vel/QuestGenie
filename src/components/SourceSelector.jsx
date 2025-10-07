@@ -48,6 +48,7 @@ export default function SourceSelector({ initialFiles = [], onSelect = () => {},
                 pages: undefined,
                 size: file.size,
                 _file: file,
+                preview: URL.createObjectURL(file), // Add preview URL for uploaded files
             }
         })
 
