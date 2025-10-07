@@ -64,14 +64,16 @@ export default function PdfQuestioner() {
           <div style={{ display: 'grid', gap: 12 }}>
             {questions.map((q) => (
               <div key={q.id} style={{ border: '1px solid #eee', padding: 12, borderRadius: 6 }}>
-                <div style={{ fontSize: 14, color: '#555' }}>{q.type.toUpperCase()} {q.source_page ? `• page ${q.source_page}` : ''}</div>
+                <div style={{ fontSize: 14, color: '#555' }}>
+                  {q.type.toUpperCase()} {q.source_page ? `• page ${q.source_page}` : ''}
+                </div>
                 <div style={{ marginTop: 8, fontWeight: 600 }}>{q.question}</div>
 
                 {q.type === 'mcq' && q.options && (
                   <ul style={{ listStyle: 'none', paddingLeft: 0, marginTop: 8 }}>
                     {q.options.map((opt, i) => {
                       const label = String.fromCharCode(65 + i);
-                      const isCorrect = q.answer && (q.answer === opt || q.answer === label || q.answer === (label + ')') );
+                      const isCorrect = q.answer && (q.answer === opt || q.answer === label || q.answer === (label + ')'));
                       return (
                         <li key={i} style={{ padding: '6px 8px', background: isCorrect ? '#e6ffed' : 'transparent', borderRadius: 4 }}>
                           <strong style={{ marginRight: 8 }}>{label}.</strong> {opt}
@@ -87,12 +89,16 @@ export default function PdfQuestioner() {
                   </div>
                 )}
 
-                {q.type === 'laq' && q.expected_points && (
+                {q.type === 'laq' && (
                   <div style={{ marginTop: 8 }}>
                     <div style={{ color: '#333' }}><strong>Expected points:</strong></div>
                     <ul>
-                      {q.expected_points.map((p, i) => <li key={i}>{p}</li>)}
+                      {q.answer && q.answer.map((p, i) => <li key={i}>{p}</li>)}
                     </ul>
+                    <textarea
+                      placeholder="Type your answer here..."
+                      style={{ width: '100%', marginTop: 8, padding: 8, borderRadius: 4, border: '1px solid #ccc' }}
+                    />
                   </div>
                 )}
 
