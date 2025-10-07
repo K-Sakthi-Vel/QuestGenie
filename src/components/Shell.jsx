@@ -11,9 +11,9 @@ export default function Shell() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* <Topbar /> */}
+            {/* <Topbar />   */}
             <div className="flex">
-                {sidebarOpen && <Sidebar />}
+                <Sidebar />
                 {/* MainContent now handles all view rendering internally */}
                 <MainContent />
             </div>
