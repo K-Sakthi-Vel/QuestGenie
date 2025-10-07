@@ -6,7 +6,7 @@ import { useQuiz } from '../../contexts/QuizContext'
 
 export default function PDFToolbar() {
     const { activeFile } = usePdf()
-    const { setCurrentQuiz } = useQuiz()
+    const { setCurrentQuiz, setLoading } = useQuiz()
     const [isGenerating, setIsGenerating] = useState(false)
 
     const handleGenerateQuiz = async () => {
@@ -22,6 +22,7 @@ export default function PDFToolbar() {
         }
 
         setIsGenerating(true)
+        setLoading(true)
         try {
             const form = new FormData()
             form.append('file', fileObj)
@@ -52,20 +53,23 @@ export default function PDFToolbar() {
             alert('Generating quiz failed: ' + (err.message || String(err)))
         } finally {
             setIsGenerating(false)
+            setLoading(false)
         }
     }
 
     return (
         <div className="flex items-center justify-between gap-3 p-3 bg-white rounded-md shadow-sm">
             <div className="flex items-center gap-2">
-                <Button size="sm">Prev</Button>
-                <Button size="sm">Next</Button>
+                <Button size="sm" disabled={isGenerating}>Prev</Button>
+                <Button size="sm" disabled={isGenerating}>Next</Button>
                 <div className="px-2 text-sm text-gray-600">Page 1 / 10</div>
             </div>
             <div className="flex items-center gap-2">
-                <Button variant="ghost">Zoom -</Button>
-                <Button variant="ghost">Zoom +</Button>
-                <Button color="primary" onClick={handleGenerateQuiz}>Generate Quiz</Button>
+                <Button variant="ghost" disabled={isGenerating}>Zoom -</Button>
+                <Button variant="ghost" disabled={isGenerating}>Zoom +</Button>
+                <Button color="primary" onClick={handleGenerateQuiz} disabled={isGenerating}>
+                    {isGenerating ? 'Generating...' : 'Generate Quiz'}
+                </Button>
             </div>
         </div>
     )
