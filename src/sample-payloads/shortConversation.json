@@ -1,0 +1,38 @@
+{
+  "chat": {
+    "id": "chat-1",
+    "title": "Introduction to React Hooks",
+    "participants": ["Student", "QuestGenie"],
+    "tags": ["React", "JavaScript", "Web Development"]
+  },
+  "messages": [
+    {
+      "id": "msg-1",
+      "chatId": "chat-1",
+      "sender": "student",
+      "text": "Can you explain React Hooks to me?",
+      "timestamp": "10:40 AM"
+    },
+    {
+      "id": "msg-2",
+      "chatId": "chat-1",
+      "sender": "assistant",
+      "text": "Of course! Hooks are functions that let you “hook into” React state and lifecycle features from function components. The most common ones are `useState` and `useEffect`.",
+      "timestamp": "10:41 AM"
+    },
+    {
+      "id": "msg-3",
+      "chatId": "chat-1",
+      "sender": "student",
+      "text": "Okay, what is `useState` for?",
+      "timestamp": "10:42 AM"
+    },
+    {
+      "id": "msg-4",
+      "chatId": "chat-1",
+      "sender": "assistant",
+      "text": "Sure, let's start with `useState`. It lets you add React state to function components.",
+      "timestamp": "10:42 AM"
+    }
+  ]
+}

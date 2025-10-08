@@ -1,0 +1,34 @@
+{
+  "chat": {
+    "id": "chat-2",
+    "title": "Understanding Photosynthesis",
+    "participants": ["Student", "QuestGenie"],
+    "tags": ["Biology", "Science"]
+  },
+  "messages": [
+    {
+      "id": "msg-5",
+      "chatId": "chat-2",
+      "sender": "student",
+      "text": "I'm having trouble understanding the light-dependent reactions in photosynthesis.",
+      "timestamp": "Yesterday"
+    },
+    {
+      "id": "msg-6",
+      "chatId": "chat-2",
+      "sender": "assistant",
+      "text": "I can help with that. Here is a video that might help visualize the process.",
+      "timestamp": "Yesterday",
+      "youtubeRecommendation": {
+        "id": "yt-2",
+        "thumbnail": "https://i.ytimg.com/vi/csmLi2aQY_c/maxresdefault.jpg",
+        "title": "Photosynthesis: Light-dependent Reactions",
+        "channelName": "Khan Academy",
+        "duration": "12:45",
+        "description": "A detailed explanation of the light-dependent reactions, including the roles of chlorophyll, water, and ATP.",
+        "relevance": "High relevance",
+        "url": "https://www.youtube.com/watch?v=csmLi2aQY_c"
+      }
+    }
+  ]
+}
