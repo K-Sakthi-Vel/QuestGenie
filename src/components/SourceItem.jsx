@@ -10,7 +10,7 @@ export default function SourceItem({ file = {}, onOpen = () => { }, isSelected, 
             onClick={onOpen}
         >
             <div>
-                <div className="font-medium">{file.title || 'Untitled PDF'}</div>
+                <div className="font-medium">{file.title.replace(/\.pdf$/i, "") || 'Untitled PDF'}</div>
             </div>
             <div className="flex items-center">
                 {scoreExists && (

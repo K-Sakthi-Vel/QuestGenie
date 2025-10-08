@@ -72,7 +72,7 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend }) 
       resolveSseConnectionPromise.current = resolve;
     });
 
-    const es = new EventSource(`http://localhost:5000/api/chat/stream/${activeChat.id}`);
+    const es = new EventSource(`${process.env.REACT_APP_BACKEND_URL}/api/chat/stream/${activeChat.id}`);
     esRef.current = es;
 
     es.onopen = () => {
@@ -145,7 +145,7 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend }) 
       }
 
       // POST to server to start streaming model response
-      await fetch('http://localhost:5000/api/chat/send', {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chatId: activeChat.id, message: text }),
