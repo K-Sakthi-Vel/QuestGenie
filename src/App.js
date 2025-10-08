@@ -9,13 +9,13 @@ import { UIProvider } from './contexts/UIContext'
 export default function App() {
   return (
     <UIProvider>
-      <PdfProvider>
-        <QuizProvider>
+      <QuizProvider>
+        <PdfProvider>
           <ProgressProvider>
             <Shell />
           </ProgressProvider>
-        </QuizProvider>
-      </PdfProvider>
+        </PdfProvider>
+      </QuizProvider>
     </UIProvider>
   )
 }

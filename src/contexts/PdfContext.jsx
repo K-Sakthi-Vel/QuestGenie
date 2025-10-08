@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react'
 import { listPdfs, getPdf, deletePdf } from '../utils/idbHelper' // Import IndexedDB helpers
+import { useQuiz } from './QuizContext';
 
 
 const PdfContext = createContext()
@@ -10,6 +11,7 @@ export function PdfProvider({ children }) {
     const [files, setFiles] = useState([]) // {id,title,pages,previewUrl, blobKey}
     const [activeFile, setActiveFile] = useState(null) // {id,title,pages,previewUrl, blobKey}
     const [selection, setSelection] = useState(null) // {page,rect,text}
+    const { clearQuiz } = useQuiz();
 
     // Function to load files from IndexedDB
     const loadFilesFromIndexedDB = useCallback(async () => {
@@ -79,9 +81,10 @@ export function PdfProvider({ children }) {
         // No need to save to localStorage here, as files are managed by IndexedDB
     }
 
-    const removeFile = async (fileId) => {
+    const deleteFile = async (fileId) => {
         try {
-            await deletePdf(fileId)
+            await deletePdf(fileId) // This is your IndexedDB helper
+            clearQuiz(fileId); // Clear quiz data from local storage
             setFiles((s) => s.filter(f => f.id !== fileId))
             if (activeFile && activeFile.id === fileId) {
                 setActiveFile(null)
@@ -91,13 +94,13 @@ export function PdfProvider({ children }) {
             const fileToRemove = files.find(f => f.id === fileId)
             if (fileToRemove && fileToRemove.preview) URL.revokeObjectURL(fileToRemove.preview)
         } catch (error) {
-            console.error("Failed to delete PDF from IndexedDB", error)
+            console.error("Failed to delete PDF", error)
         }
     }
 
     return (
         <PdfContext.Provider
-            value={{ files, addFile, removeFile, activeFile, setActiveFile, selection, setSelection }}
+            value={{ files, addFile, deleteFile, activeFile, setActiveFile, selection, setSelection }}
         >
             {children}
         </PdfContext.Provider>
