@@ -98,145 +98,146 @@ export default function QuizRenderer() {
 
   if (currentQuiz) {
     return (
-      <div className="w-full h-[100vh] bg-white border rounded-md overflow-auto p-4">
+      <div className="w-full h-[calc(100vh-125px)] bg-white border rounded-md p-4 flex flex-col">
         <div className="font-semibold mb-4 text-lg">Generated Quiz</div>
 
-        <div className="space-y-6">
-          {currentQuiz.questions.map((q) => {
-            const questionText = q.question || q.text || 'Question not provided';
-            const result = results?.find((r) => r.questionId === q.id);
+        <div className="flex-grow overflow-y-auto pr-4">
+          <div className="space-y-6">
+            {currentQuiz.questions.map((q) => {
+              const questionText = q.question || q.text || 'Question not provided';
+              const result = results?.find((r) => r.questionId === q.id);
 
-            return (
-              <div
-                key={q.id}
-                className={`p-4 border-2 rounded-md shadow-sm hover:shadow-md transition-all bg-gray-50 ${
-                  result ? (result.isCorrect ? 'border-green-500' : 'border-red-500') : ''
-                }`}
-              >
-                {/* Question */}
-                <div className="font-medium mb-2 text-gray-800">
-                  <ReactMarkdown components={{ p: ({ node, ...props }) => <p className="mb-1" {...props} /> }}>
-                    {questionText}
-                  </ReactMarkdown>
-                </div>
+              return (
+                <div
+                  key={q.id}
+                  className={`p-4 border-2 rounded-md shadow-sm hover:shadow-md transition-all bg-gray-50 ${
+                    result ? (result.isCorrect ? 'border-green-500' : 'border-red-500') : ''
+                  }`}
+                >
+                  {/* Question */}
+                  <div className="font-medium mb-2 text-gray-800">
+                    <ReactMarkdown components={{ p: ({ node, ...props }) => <p className="mb-1" {...props} /> }}>
+                      {questionText}
+                    </ReactMarkdown>
+                  </div>
 
-                {/* MCQ */}
-                {q.type === 'mcq' && Array.isArray(q.options) && (
-                  <div className="grid gap-2 mt-3">
-                    {q.options.map((o, i) => {
-                      const resultForQuestion = results?.find(r => r.questionId === q.id);
-                      const isSelected = userAnswers[q.id] === o;
+                  {/* MCQ */}
+                  {q.type === 'mcq' && Array.isArray(q.options) && (
+                    <div className="grid gap-2 mt-3">
+                      {q.options.map((o, i) => {
+                        const resultForQuestion = results?.find((r) => r.questionId === q.id);
+                        const isSelected = userAnswers[q.id] === o;
 
-                      // This function determines the background color of the option based on the quiz state.
-                      const getOptionClassName = () => {
-                        // After the quiz is submitted, show correctness.
-                        if (resultForQuestion) {
-                          if (resultForQuestion.userAnswer === o) {
-                            // If this was the user's answer, color it green for correct, red for incorrect.
-                            return resultForQuestion.isCorrect ? 'bg-green-100' : 'bg-red-100';
+                        // This function determines the background color of the option based on the quiz state.
+                        const getOptionClassName = () => {
+                          // After the quiz is submitted, show correctness.
+                          if (resultForQuestion) {
+                            if (resultForQuestion.userAnswer === o) {
+                              // If this was the user's answer, color it green for correct, red for incorrect.
+                              return resultForQuestion.isCorrect ? 'bg-green-100' : 'bg-red-100';
+                            }
+                            // Unselected options remain white.
+                            return 'bg-white';
                           }
-                          // Unselected options remain white.
-                          return 'bg-white';
-                        }
-                        // Before submission, highlight the selected option in blue.
-                        if (isSelected) {
-                          return 'bg-blue-100';
-                        }
-                        // Default state for unselected options before submission.
-                        return 'bg-white hover:bg-blue-50';
-                      };
+                          // Before submission, highlight the selected option in blue.
+                          if (isSelected) {
+                            return 'bg-blue-100';
+                          }
+                          // Default state for unselected options before submission.
+                          return 'bg-white hover:bg-blue-50';
+                        };
 
-                      return (
-                        <div
-                          key={i}
-                          className={`p-3 border rounded transition cursor-pointer ${getOptionClassName()}`}
-                          onClick={() => !resultForQuestion && handleAnswerChange(q.id, o)}
-                        >
-                          <ReactMarkdown components={{ p: ({ node, ...props }) => <p {...props} /> }}>
-                            {o}
-                          </ReactMarkdown>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* SAQ */}
-                {q.type === 'saq' && (
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-600 mb-1">Your Answer:</label>
-                    <textarea
-                      className="w-full mt-1 p-2 border rounded bg-white"
-                      rows={3}
-                      placeholder="Write your answer here..."
-                      value={userAnswers[q.id] || ''}
-                      onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                    />
-                  </div>
-                )}
-
-                {/* LAQ */}
-                {q.type === 'laq' && (
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-600 mb-1">Your Answer:</label>
-                    <textarea
-                      className="w-full mt-1 p-2 border rounded bg-white"
-                      rows={6}
-                      placeholder="Write your detailed answer here..."
-                      value={userAnswers[q.id] || ''}
-                      onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                    />
-                  </div>
-                )}
-
-                {showAnswers && (
-                  <div className="mt-4 p-3 bg-gray-100 rounded">
-                    <p className="font-semibold text-sm text-gray-700">Correct Answer:</p>
-                    <div className="text-gray-900">
-                      <ReactMarkdown
-                        components={{ p: ({ node, ...props }) => <p className="prose" {...props} /> }}
-                      >
-                        {Array.isArray(q.answer) ? q.answer.join('; ') : q.answer}
-                      </ReactMarkdown>
+                        return (
+                          <div
+                            key={i}
+                            className={`p-3 border rounded transition cursor-pointer ${getOptionClassName()}`}
+                            onClick={() => !resultForQuestion && handleAnswerChange(q.id, o)}
+                          >
+                            <ReactMarkdown components={{ p: ({ node, ...props }) => <p {...props} /> }}>
+                              {o}
+                            </ReactMarkdown>
+                          </div>
+                        );
+                      })}
                     </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  )}
+
+                  {/* SAQ */}
+                  {q.type === 'saq' && (
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-gray-600 mb-1">Your Answer:</label>
+                      <textarea
+                        className="w-full mt-1 p-2 border rounded bg-white"
+                        rows={3}
+                        placeholder="Write your answer here..."
+                        value={userAnswers[q.id] || ''}
+                        onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                      />
+                    </div>
+                  )}
+
+                  {/* LAQ */}
+                  {q.type === 'laq' && (
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-gray-600 mb-1">Your Answer:</label>
+                      <textarea
+                        className="w-full mt-1 p-2 border rounded bg-white"
+                        rows={6}
+                        placeholder="Write your detailed answer here..."
+                        value={userAnswers[q.id] || ''}
+                        onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                      />
+                    </div>
+                  )}
+
+                  {showAnswers && (
+                    <div className="mt-4 p-3 bg-gray-100 rounded">
+                      <p className="font-semibold text-sm text-gray-700">Correct Answer:</p>
+                      <div className="text-gray-900">
+                        <ReactMarkdown
+                          components={{ p: ({ node, ...props }) => <p className="prose" {...props} /> }}
+                        >
+                          {Array.isArray(q.answer) ? q.answer.join('; ') : q.answer}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {score !== null && (
-          <div className="mt-6 p-4 border rounded bg-blue-50">
+        <div className="mt-6 pt-4 border-t flex justify-between items-center">
+          <div>
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+              onClick={handleSubmit}
+              disabled={!!results}
+            >
+              Submit Answers
+            </button>
+            {results && (
+              <>
+                <button
+                  className="ml-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                  onClick={() => setShowAnswers(!showAnswers)}
+                >
+                  {showAnswers ? 'Hide Answers' : 'View Answers'}
+                </button>
+                <button
+                  className="ml-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                  onClick={handleReattempt}
+                >
+                  Re-attempt
+                </button>
+              </>
+            )}
+          </div>
+          {score !== null && (
             <div className="font-semibold text-lg">
               Your Score: {score} / {currentQuiz.questions.length}
             </div>
-          </div>
-        )}
-
-        <div className="mt-6">
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-            onClick={handleSubmit}
-            disabled={!!results}
-          >
-            Submit Answers
-          </button>
-          {results && (
-            <>
-              <button
-                className="ml-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                onClick={() => setShowAnswers(!showAnswers)}
-              >
-                {showAnswers ? 'Hide Answers' : 'View Answers'}
-              </button>
-              <button
-                className="ml-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                onClick={handleReattempt}
-              >
-                Re-attempt
-              </button>
-            </>
           )}
         </div>
       </div>
