@@ -47,7 +47,7 @@ export default function PDFToolbar() {
                 rawModelOutput: q.rawModelOutput || q.raw || null
             }))
 
-            setCurrentQuiz({ id: json.jobId || activeFile.id, questions: mapped, meta: { partial: json.partial } }, activeFile.id)
+            setCurrentQuiz({ id: json.jobId || activeFile.id, questions: mapped, meta: { partial: json.partial }, title: activeFile.title.replace(/\.pdf$/i, "") }, activeFile.id)
         } catch (err) {
             console.error('Generate quiz error', err)
             alert('Generating quiz failed: ' + (err.message || String(err)))

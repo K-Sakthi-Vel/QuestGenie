@@ -11,7 +11,6 @@ export default function SourceItem({ file = {}, onOpen = () => { }, isSelected, 
         >
             <div>
                 <div className="font-medium">{file.title || 'Untitled PDF'}</div>
-                <div className="text-xs text-gray-500">{file.pages ? `${file.pages} pages` : '—'}</div>
             </div>
             <div className="flex items-center">
                 {scoreExists && (
@@ -19,7 +18,6 @@ export default function SourceItem({ file = {}, onOpen = () => { }, isSelected, 
                         {score}
                     </div>
                 )}
-                <div className="text-xs text-gray-400">›</div>
             </div>
         </div>
     )

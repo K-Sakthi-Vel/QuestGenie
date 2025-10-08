@@ -49,7 +49,7 @@ export default function Dashboard() {
                         }
                     });
                     performanceData.push({
-                        name: quiz.sourceId.substring(0, 15), // Shorten name for chart
+                        name: quiz.title || quiz.sourceId.substring(0, 15), // Use title, fallback to shortened sourceId
                         accuracy: (quizCorrect / quiz.questions.length) * 100,
                     });
                 }
