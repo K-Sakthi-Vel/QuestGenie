@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePdf } from '../contexts/PdfContext';
 import { useUI } from '../contexts/UIContext';
 import PDFWorkspace from './PDFWorkspace';
@@ -10,8 +10,15 @@ import { putPdf } from '../utils/idbHelper' // Import IndexedDB putPdf
 
 export default function MainContent() {
     const { setSidebarOpen, setActiveView, activeView } = useUI() // Get setActiveView here
-    const { addFile, setActiveFile, activeFile } = usePdf()
+    const { addFile, setActiveFile, activeFile, files } = usePdf()
     const [isGenerating, setIsGenerating] = useState(false)
+
+    useEffect(() => {
+        // If we're in the questionnaire view, have files, but no active file, set the first one as active.
+        if (activeView === 'questionnaire' && files && files.length > 0 && !activeFile) {
+            setActiveFile(files[0]);
+        }
+    }, [activeView, files, activeFile, setActiveFile]);
 
 
     const handleFileUpload = async (event) => {
@@ -55,6 +62,12 @@ export default function MainContent() {
             case 'chats':
                 return <ChatPanel />;
             case 'questionnaire':
+                // If there are files, show the workspace. The active file will be set by the effect
+                // or will be the one already selected.
+                if (files && files.length > 0) {
+                    return <PDFWorkspace selectedQuestionnaire={{ pdfFile: activeFile || files[0] }} />;
+                }
+                // If there are no files, show the placeholder.
                 return (
                     <div className="flex items-center justify-center h-full">
                         <div className="text-center">

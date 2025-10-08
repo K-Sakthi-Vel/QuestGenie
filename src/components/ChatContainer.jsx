@@ -1,6 +1,14 @@
 // ChatContainer.tsx
 import React, { useEffect, useRef, useState } from 'react';
-import { FiPaperclip, FiSend, FiThumbsUp } from 'react-icons/fi';
+import { FiPaperclip, FiSend, FiThumbsUp, FiBookOpen } from 'react-icons/fi';
+
+const WelcomeMessage = () => (
+  <div className="flex flex-col items-center justify-center h-full text-gray-500">
+    <FiBookOpen size={64} className="mb-4" />
+    <h2 className="text-2xl font-semibold mb-2">Welcome!</h2>
+    <p className="text-center">I am your virtual teaching companion. <br /> Ask me anything to get started.</p>
+  </div>
+);
 
 const YoutubeCard = ({ video }) => (
   <div className="max-w-sm rounded-lg border border-gray-200 overflow-hidden my-4">
@@ -27,7 +35,7 @@ const ChatMessage = ({ message }) => {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       <div
-        className={`rounded-lg px-4 py-3 max-w-md ${isUser ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+        className={`rounded-lg px-4 py-3 max-w-md ${isUser ? 'bg-red-400 text-white' : 'bg-gray-200 text-gray-800'}`}
       >
         <p className="whitespace-pre-wrap">{message.text}</p>
         {message.youtubeRecommendation && <YoutubeCard video={message.youtubeRecommendation} />}
@@ -44,6 +52,7 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend }) 
   const sseConnectionPromise = useRef(null);
   const resolveSseConnectionPromise = useRef(null);
   const scrollRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const setMessages = onMessagesChange;
 
@@ -150,6 +159,21 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend }) 
     }
   };
 
+  const handleInputChange = (e) => {
+    const textarea = textareaRef.current;
+    setInputValue(e.target.value);
+
+    if (textarea) {
+      textarea.style.height = "auto"; // reset
+      const newHeight = Math.min(textarea.scrollHeight, 150);
+      textarea.style.height = `${newHeight}px`;
+
+      // show scrollbar only if height reaches max
+      textarea.style.overflowY = textarea.scrollHeight > 150 ? "auto" : "hidden";
+    }
+  };
+
+
   const handleSend = () => {
     if (!inputValue.trim()) return;
     sendMessageToServer(inputValue.trim());
@@ -167,17 +191,17 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend }) 
 
   return (
     <div className="flex flex-col h-full bg-white">
-      <header className="p-4 border-b border-gray-200">
-        <h2 className="font-semibold text-lg">{activeChat?.title || 'Chat'}</h2>
-        {activeChat?.tags && <div className="text-sm text-gray-500 mt-1">{activeChat.tags.join(', ')}</div>}
-      </header>
 
       <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
-        {messages.map((msg) => (
-          <div key={msg.id}>
-            <ChatMessage message={msg} />
-          </div>
-        ))}
+        {messages.length === 0 ? (
+          <WelcomeMessage />
+        ) : (
+          messages.map((msg) => (
+            <div key={msg.id}>
+              <ChatMessage message={msg} />
+            </div>
+          ))
+        )}
 
         {streaming && (
           <div className="text-sm text-gray-500 italic">Assistant is typing...</div>
@@ -191,28 +215,32 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend }) 
           </button>
         </div>
 
-        <div className="relative">
+        <div className="relative flex items-center">
           <textarea
+            ref={textareaRef}
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Type your question to the teaching companion. Press Enter to send, Shift+Enter for newline."
+            placeholder="Type your question..."
             className="w-full p-3 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             rows={1}
+            style={{ maxHeight: '150px', minHeight: '40px', overflowY: 'hidden' }}
           />
-          <div className="absolute top-1/2 right-3 transform -translate-y-1/2 flex space-x-2">
+
+          <div className="absolute right-3 flex items-center space-x-2 h-full">
             <button className="text-gray-500 hover:text-gray-700" title="Attach file">
               <FiPaperclip size={20} />
             </button>
             <button
               onClick={handleSend}
-              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:bg-blue-300"
+              className="bg-red-400 text-white p-2 rounded-full hover:bg-blue-700 disabled:bg-red-300"
               disabled={!inputValue.trim()}
             >
               <FiSend size={20} />
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );

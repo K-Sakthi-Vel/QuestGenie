@@ -27,19 +27,22 @@ export default function Sidebar() {
                 </button>
             </div>
             <nav className="p-4 space-y-2 flex-1">
-                {navItems.map((item) => (
-                    <div
-                        key={item.id}
-                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${activeView === item.id
-                                ? 'bg-red-200 text-gray-900 font-semibold'
-                                : 'text-gray-600 hover:bg-gray-100'
-                            } ${!sidebarOpen && 'justify-center'}`}
-                        onClick={() => setActiveView(item.id)}
-                    >
-                        {item.icon}
-                        {sidebarOpen && <span>{item.label}</span>}
-                    </div>
-                ))}
+                {navItems.map((item) => {
+                    const isActive = activeView === item.id || (item.id === 'questionnaire' && activeView === 'pdf-workspace');
+                    return (
+                        <div
+                            key={item.id}
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${isActive
+                                    ? 'bg-red-200 text-gray-900 font-semibold'
+                                    : 'text-gray-600 hover:bg-gray-100'
+                                } ${!sidebarOpen && 'justify-center'}`}
+                            onClick={() => setActiveView(item.id)}
+                        >
+                            {item.icon}
+                            {sidebarOpen && <span>{item.label}</span>}
+                        </div>
+                    )
+                })}
                 {(activeView === 'questionnaire' || activeView === 'pdf-workspace') && sidebarOpen && (
                     <div className="p-4 border-t">
                         <SourceList />
