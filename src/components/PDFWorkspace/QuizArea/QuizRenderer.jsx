@@ -86,7 +86,7 @@ export default function QuizRenderer() {
 
   if (loading) {
     return (
-      <div className="w-full h-[70vh] bg-white border rounded-md overflow-auto flex flex-col items-center justify-center p-6">
+      <div className="w-full h-[100vh] bg-white border rounded-md overflow-auto flex flex-col items-center justify-center p-6">
         <div
           className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
           style={{ borderTopColor: '#007bff' }}
