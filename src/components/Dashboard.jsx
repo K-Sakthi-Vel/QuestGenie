@@ -90,7 +90,7 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="p-4 bg-gray-50 min-h-screen">
+        <div className="p-4 bg-gray-50 h-[calc(100vh-65px)]">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h2 className="text-lg font-semibold text-gray-600">Quizzes Taken</h2>

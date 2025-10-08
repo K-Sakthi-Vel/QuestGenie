@@ -220,7 +220,7 @@ export default function PDFViewer() {
 
   if (loading) {
     return (
-      <div className="w-full h-[70vh] bg-white border rounded-md overflow-auto flex flex-col items-center justify-center p-6">
+      <div className="w-full h-[70vh] bg-white border overflow-auto flex flex-col items-center justify-center p-6">
         <div
           className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
           style={{ borderTopColor: '#007bff' }}
@@ -231,7 +231,7 @@ export default function PDFViewer() {
   }
 
   return (
-    <div className="w-full h-[100%] bg-white border rounded-md overflow-hidden flex flex-col">
+    <div className="w-full h-[100%] bg-white border overflow-hidden flex flex-col">
       {loading ? (
         <div className="w-full h-full flex flex-col items-center justify-center p-6">
           <div

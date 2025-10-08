@@ -1,0 +1,62 @@
+{
+  "uiSpec": {
+    "layout": {
+      "mainContainer": "flex-1 flex",
+      "chatWindow": "flex-1 flex flex-col",
+      "rightDrawer": "w-80 bg-gray-50 border-l border-gray-200"
+    },
+    "sidebar": {
+      "collapsible": true,
+      "initialState": "open"
+    },
+    "chats": [
+      {
+        "id": "chat-1",
+        "title": "Introduction to React Hooks",
+        "lastMessage": "Sure, let's start with `useState`.",
+        "timestamp": "10:42 AM"
+      },
+      {
+        "id": "chat-2",
+        "title": "Understanding Photosynthesis",
+        "lastMessage": "Here is a video that might help.",
+        "timestamp": "Yesterday"
+      }
+    ],
+    "activeChat": {
+      "id": "chat-1",
+      "title": "Introduction to React Hooks",
+      "participants": ["Student", "QuestGenie"],
+      "tags": ["React", "JavaScript", "Web Development"]
+    },
+    "messages": [
+      {
+        "id": "msg-1",
+        "chatId": "chat-1",
+        "sender": "student",
+        "text": "Can you explain React Hooks to me?",
+        "timestamp": "10:40 AM"
+      },
+      {
+        "id": "msg-2",
+        "chatId": "chat-1",
+        "sender": "assistant",
+        "text": "Of course! Hooks are functions that let you “hook into” React state and lifecycle features from function components. Would you like a video explanation?",
+        "timestamp": "10:41 AM"
+      }
+    ],
+    "youtubeRecommendations": [
+      {
+        "id": "yt-1",
+        "messageId": "msg-2",
+        "thumbnail": "https://i.ytimg.com/vi/TNhaISOUy6Q/maxresdefault.jpg",
+        "title": "React Hooks in 10 Minutes",
+        "channelName": "Web Dev Simplified",
+        "duration": "10:32",
+        "description": "A quick and concise introduction to the most commonly used React Hooks.",
+        "relevance": "High relevance",
+        "url": "https://www.youtube.com/watch?v=TNhaISOUy6Q"
+      }
+    ]
+  }
+}

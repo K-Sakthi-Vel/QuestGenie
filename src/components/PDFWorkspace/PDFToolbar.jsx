@@ -58,7 +58,7 @@ export default function PDFToolbar() {
     }
 
     return (
-        <div className="flex items-center justify-between gap-3 p-3 bg-white rounded-md shadow-sm">
+        <div className="flex items-center justify-between gap-3 p-3 bg-white shadow-sm">
             <div className="flex items-center gap-2">
             </div>
             <div className="flex items-center gap-2">

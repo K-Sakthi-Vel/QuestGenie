@@ -18,15 +18,24 @@ export default function PDFWorkspace({ selectedQuestionnaire }) {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div className="lg:col-span-8">
-                <PDFToolbar />
-                <div className="mt-4">
+            {/* Left Panel */}
+            <div className="lg:col-span-8 h-[calc(100vh-65px)] flex flex-col">
+                {/* Toolbar fixed at top */}
+                <div className="shrink-0">
+                    <PDFToolbar />
+                </div>
+
+                {/* PDF viewer fills remaining space */}
+                <div className="flex-1 overflow-hidden">
                     <PDFViewer pdfUrl={pdfUrl} />
                 </div>
             </div>
-            <aside className="lg:col-span-4">
+
+            {/* Right Panel */}
+            <aside className="lg:col-span-4 h-[calc(100vh-65px)] overflow-y-auto">
                 <AnnotationsPanel pdfUrl={pdfUrl} />
             </aside>
         </div>
+
     )
 }
