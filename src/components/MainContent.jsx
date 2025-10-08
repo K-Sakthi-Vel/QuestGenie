@@ -72,7 +72,7 @@ export default function MainContent() {
     };
 
     return <main className="flex-1">
-        <div className='h-[65px] w-full h-screen border-b bg-gray-50 flex items-center justify-between px-6'>
+        <div className='h-[65px] w-full border-b bg-gray-50 flex items-center justify-between px-6'>
             {
                 activeView === 'dashboard' && <h1 className="text-2xl font-bold text-red-400">Dashboard</h1>
             }
