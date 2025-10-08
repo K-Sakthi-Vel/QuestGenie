@@ -60,6 +60,25 @@ export default function ChatPanel() {
         setMessages([]); // Explicitly clear messages for the new chat
     };
 
+    const handleDeleteChat = (chatId) => {
+        // Remove the chat from the chats list
+        const updatedChats = chats.filter(chat => chat.id !== chatId);
+        setChats(updatedChats);
+
+        // Remove the chat's messages from local storage
+        localStorage.removeItem(`chat_${chatId}`);
+
+        // If the deleted chat was the active one, select a new active chat
+        if (activeChatId === chatId) {
+            if (updatedChats.length > 0) {
+                setActiveChatId(updatedChats[0].id);
+            } else {
+                // If no chats are left, create a new default one
+                handleNewChat();
+            }
+        }
+    };
+
     useEffect(() => {
         const activeChat = chats.find(chat => chat.id === activeChatId);
         if (activeChat && activeChat.title === 'New Chat' && messages.length > 0) {
@@ -88,6 +107,7 @@ export default function ChatPanel() {
                 chats={chats}
                 onSelectChat={handleSelectChat}
                 onNewChat={handleNewChat}
+                onDeleteChat={handleDeleteChat}
             />
         </div>
     );
