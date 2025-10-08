@@ -27,7 +27,7 @@ export default function PDFToolbar() {
             const form = new FormData()
             form.append('file', pdfRecord.blob, activeFile.title || 'document.pdf')
 
-            const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000'
+            const API_BASE = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'
             const resp = await fetch(`${API_BASE}/api/upload`, { method: 'POST', body: form })
             if (!resp.ok) {
                 const txt = await resp.text()
