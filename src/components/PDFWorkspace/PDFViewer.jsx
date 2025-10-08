@@ -56,7 +56,10 @@ export default function PDFViewer() {
       if (activeFile && activeFile.blob) {
         try {
           const arrayBuffer = await activeFile.blob.arrayBuffer();
-          const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+          const loadingTask = pdfjs.getDocument({
+            data: arrayBuffer,
+            wasmUrl: `${process.env.PUBLIC_URL}/`,
+          });
           const pdf = await loadingTask.promise;
           setPdfDoc(pdf);
           setPageNum(1); // Reset to first page when a new PDF is loaded
@@ -220,7 +223,7 @@ export default function PDFViewer() {
 
   if (loading) {
     return (
-      <div className="w-full h-[70vh] bg-white border overflow-auto flex flex-col items-center justify-center p-6">
+      <div className="w-full h-[calc(100vh-65px)] bg-white border overflow-auto flex flex-col items-center justify-center p-6">
         <div
           className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
           style={{ borderTopColor: '#007bff' }}
@@ -275,8 +278,12 @@ export default function PDFViewer() {
           </div>
         </>
       ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="text-gray-400">No PDF selected. Please upload a PDF.</div>
+        <div className="w-full h-full flex flex-col items-center justify-center text-center p-6">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 className="text-lg font-medium text-gray-600">Curious about what's in your PDF?</h3>
+          <p className="text-gray-400 mt-1">Let our AI generate some questions for you. Get started from the panel on the right.</p>
         </div>
       )}
     </div>

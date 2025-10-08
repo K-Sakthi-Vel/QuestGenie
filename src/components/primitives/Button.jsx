@@ -9,7 +9,7 @@ export default function Button({ children, className = '', variant = 'solid', si
         lg: 'px-4 py-2 text-base',
     }
     const variants = {
-        solid: 'bg-indigo-600 text-white hover:bg-indigo-700',
+        solid: 'bg-red-400 text-white hover:bg-red-500',
         ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
     }
     return (

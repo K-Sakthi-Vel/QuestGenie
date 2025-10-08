@@ -47,7 +47,7 @@ export default function PDFToolbar() {
                 rawModelOutput: q.rawModelOutput || q.raw || null
             }))
 
-            setCurrentQuiz({ id: json.jobId || activeFile.id, questions: mapped, meta: { partial: json.partial } }, activeFile.id)
+            setCurrentQuiz({ id: json.jobId || activeFile.id, questions: mapped, meta: { partial: json.partial }, title: activeFile.title.replace(/\.pdf$/i, "") }, activeFile.id)
         } catch (err) {
             console.error('Generate quiz error', err)
             alert('Generating quiz failed: ' + (err.message || String(err)))
@@ -58,7 +58,7 @@ export default function PDFToolbar() {
     }
 
     return (
-        <div className="flex items-center justify-between gap-3 p-3 bg-white shadow-sm">
+        <div className="flex items-center justify-between gap-3 p-3 bg-white shadow-sm h-[60px]">
             <div className="flex items-center gap-2">
             </div>
             <div className="flex items-center gap-2">
