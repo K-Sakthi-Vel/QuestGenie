@@ -10,7 +10,7 @@ export default function Sidebar() {
     const navItems = [
         { id: 'dashboard', label: 'Dashboard', icon: <LuLayoutDashboard size={20} /> },
         { id: 'chats', label: 'Chats', icon: <LuMessageSquare size={20} /> },
-        { id: 'questionnaire', label: 'Questionnaire', icon: <LuFileQuestion size={20} /> },
+        { id: 'questionnaire', label: 'AI Quiz Lab', icon: <LuFileQuestion size={20} /> },
     ];
 
     return (

@@ -93,7 +93,7 @@ export default function MainContent() {
                 activeView === 'chats' && <h1 className="text-2xl font-bold text-red-400">Chats</h1>
             }
             {
-                activeView === 'questionnaire' && <h1 className="text-2xl font-bold text-red-400">Questionnaire</h1>
+                activeView === 'questionnaire' && <h1 className="text-2xl font-bold text-red-400">AI Quiz Lab</h1>
             }
             {
                 activeView === 'pdf-workspace' && <h1 className="text-2xl font-bold text-red-400">PDF Workspace</h1>
