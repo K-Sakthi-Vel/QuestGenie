@@ -15,7 +15,7 @@ export default function Sidebar() {
 
     return (
         <aside className={`bg-gray-50 border-r h-screen fixed top-0 left-0 z-20 flex flex-col transition-all duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:sticky md:translate-x-0 ${sidebarOpen ? 'w-64' : 'md:w-20'}`}>
-            <div className={`h-[65px] px-4 py-3 border-b flex items-center ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
+            <div className={`h-[60px] px-4 py-3 border-b flex items-center ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
                 {sidebarOpen && (
                     <div className="flex items-center gap-2">
                         <img src={Logo} alt="Logo" className="h-10 w-10" />

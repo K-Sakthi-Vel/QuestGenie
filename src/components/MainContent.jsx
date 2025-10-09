@@ -87,7 +87,7 @@ export default function MainContent() {
     };
 
     return <main className="flex-1 h-100VH">
-        <div className='h-[65px] w-full border-b bg-gray-50 flex items-center justify-between px-6'>
+        <div className='h-[60px] w-full border-b bg-gray-50 flex items-center justify-between px-6'>
             <div className="flex items-center gap-4">
                 <button className="text-gray-600 md:hidden" onClick={() => setSidebarOpen(true)}>
                     <LuMenu size={24} />

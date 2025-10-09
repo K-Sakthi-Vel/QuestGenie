@@ -18,7 +18,7 @@ export default function PDFWorkspace({ selectedQuestionnaire }) {
     }, [selectedQuestionnaire]);
 
     return (
-        <div className="flex flex-col h-[calc(100vh-65px)]">
+        <div className="flex flex-col h-[calc(100vh-60px)]">
             {/* Tabs for mobile view */}
             <div className="lg:hidden border-b">
                 <nav className="flex space-x-4 p-2">

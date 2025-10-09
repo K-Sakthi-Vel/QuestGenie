@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 import Button from '../primitives/Button'
 import { usePdf } from '../../contexts/PdfContext'
 import { useQuiz } from '../../contexts/QuizContext'
@@ -48,9 +49,10 @@ export default function PDFToolbar() {
             }))
 
             setCurrentQuiz({ id: json.jobId || activeFile.id, questions: mapped, meta: { partial: json.partial }, title: activeFile.title.replace(/\.pdf$/i, "") }, activeFile.id)
+            toast.success('Quiz generated successfully!')
         } catch (err) {
             console.error('Generate quiz error', err)
-            alert('Generating quiz failed: ' + (err.message || String(err)))
+            toast.error('Generating quiz failed: ' + (err.message || String(err)))
         } finally {
             setIsGenerating(false)
             setLoading(false)

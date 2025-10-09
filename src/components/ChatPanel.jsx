@@ -96,7 +96,7 @@ export default function ChatPanel() {
     const activeChat = chats.find(chat => chat.id === activeChatId);
 
     return (
-        <div className="flex-1 flex h-[calc(100vh-65px)] bg-white overflow-hidden">
+        <div className="flex-1 flex h-[calc(100vh-60px)] bg-white overflow-hidden">
             <div className="flex-1 flex flex-col">
                 <ChatContainer 
                     activeChat={activeChat}

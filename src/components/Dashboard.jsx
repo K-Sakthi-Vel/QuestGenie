@@ -102,7 +102,7 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="p-4 bg-gray-50 h-[calc(100vh-65px)] overflow-y-auto">
+        <div className="p-4 bg-gray-50 h-[calc(100vh-60px)] overflow-y-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h2 className="text-lg font-semibold text-gray-600">Quizzes Taken</h2>

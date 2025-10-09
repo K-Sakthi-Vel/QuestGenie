@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useQuiz } from '../../../contexts/QuizContext';
 import ReactMarkdown from 'react-markdown';
 
@@ -69,7 +70,7 @@ export default function QuizRenderer() {
 
     localStorage.setItem(`quizScore_${sourceId}`, JSON.stringify(totalScore));
     localStorage.setItem(`quizResults_${sourceId}`, JSON.stringify(calculatedResults));
-    alert('Your answers have been submitted!');
+    toast.success(`Your score: ${totalScore} / ${currentQuiz.questions.length}`);
   };
 
   const handleReattempt = () => {
@@ -103,7 +104,7 @@ export default function QuizRenderer() {
 
   if (currentQuiz) {
     return (
-      <div className="w-full h-[calc(100vh-125px)] bg-white border rounded-md p-4 flex flex-col">
+      <div className="w-full h-[calc(100vh-122px)] bg-white border rounded-md p-4 flex flex-col">
         <div className="font-semibold mb-4 text-lg">Generated Quiz</div>
 
         <div className="flex-grow overflow-y-auto pr-4">
