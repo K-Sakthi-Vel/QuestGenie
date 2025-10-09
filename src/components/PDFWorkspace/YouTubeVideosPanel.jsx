@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import toast from "react-hot-toast";
 import { usePdf } from "../../contexts/PdfContext";
 
 /**
@@ -121,9 +122,11 @@ export default function YouTubeVideosPanel({ pdfUrl }) {
 
       setVideos(normalized);
       localStorage.setItem(getCacheKey(), JSON.stringify(normalized));
+      toast.success("YouTube suggestions generated successfully!");
     } catch (err) {
       console.error("YouTube suggestions error:", err);
       setError(err.message || "An unknown error occurred.");
+      toast.error("Failed to generate YouTube suggestions.");
     } finally {
       setIsLoading(false);
     }
@@ -159,7 +162,7 @@ export default function YouTubeVideosPanel({ pdfUrl }) {
 
       {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
 
-      <div className="overflow-y-auto flex-1">
+      <div className="overflow-y-auto h-[calc(100vh-190px)]">
         {isLoading && videos.length === 0 ? (
           <div className="w-full h-full flex flex-col items-center justify-center p-6">
             <div

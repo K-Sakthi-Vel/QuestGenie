@@ -38,7 +38,7 @@ export default function SourceItem({ file = {}, onOpen = () => { }, isSelected, 
                         {score}
                     </div>
                 )}
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={handleDelete}>
+                <div className="transition-opacity md:opacity-0 md:group-hover:opacity-100" onClick={handleDelete}>
                     <TrashIcon />
                 </div>
             </div>

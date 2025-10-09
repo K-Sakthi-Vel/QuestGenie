@@ -70,7 +70,7 @@ const RightDrawer = ({ chats, onSelectChat, onNewChat, onDeleteChat, isOpen, onC
                     e.stopPropagation();
                     openDeleteDialog(chat.id);
                   }}
-                  className="text-gray-400 opacity-0 group-hover:opacity-100 hover:text-red-500"
+                  className="text-gray-400 hover:text-red-500 md:opacity-0 md:group-hover:opacity-100"
                 >
                   <FiTrash2 />
                 </button>
