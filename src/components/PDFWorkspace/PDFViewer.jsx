@@ -16,12 +16,17 @@ export default function PDFViewer() {
   const [score, setScore] = useState(null);
 
   const canvasRef = useRef(null);
+  const renderTaskRef = useRef(null);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pageNum, setPageNum] = useState(1);
   const [pageRendering, setPageRendering] = useState(false);
   const [pageNumPending, setPageNumPending] = useState(null);
     console.log('Active file in PDFViewer:', activeFile);
   const renderPage = useCallback(async (num) => {
+    if (!pdfDoc || !canvasRef.current) return;
+    if (renderTaskRef.current) {
+      await renderTaskRef.current.cancel();
+    }
     setPageRendering(true);
     const pdfPage = await pdfDoc.getPage(num);
     const viewport = pdfPage.getViewport({ scale: 1.5 });
@@ -35,12 +40,16 @@ export default function PDFViewer() {
       viewport,
     };
 
-    const renderTask = pdfPage.render(renderContext);
-    renderTask.promise.then(() => {
+    renderTaskRef.current = pdfPage.render(renderContext);
+    renderTaskRef.current.promise.then(() => {
       setPageRendering(false);
       if (pageNumPending !== null) {
         setPageNum(pageNumPending);
         setPageNumPending(null);
+      }
+    }).catch(error => {
+      if (error.name !== 'RenderingCancelledException') {
+        console.error('Render error:', error);
       }
     });
   }, [pdfDoc, pageNumPending]);
@@ -49,6 +58,11 @@ export default function PDFViewer() {
     if (pdfDoc) {
       renderPage(pageNum);
     }
+    return () => {
+      if (renderTaskRef.current) {
+        renderTaskRef.current.cancel();
+      }
+    };
   }, [pdfDoc, pageNum, renderPage]);
 
   useEffect(() => {

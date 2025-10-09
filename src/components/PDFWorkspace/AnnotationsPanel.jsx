@@ -20,6 +20,7 @@ const TabButton = ({ children, onClick, isActive }) => (
 
 function PDFPreview({ pdfUrl }) {
     const canvasRef = useRef(null);
+    const renderTaskRef = useRef(null);
     const [pdfDoc, setPdfDoc] = useState(null);
     const [pageNum, setPageNum] = useState(1);
     const [pageRendering, setPageRendering] = useState(false);
@@ -28,7 +29,10 @@ function PDFPreview({ pdfUrl }) {
     const [error, setError] = useState(null);
   
     const renderPage = useCallback(async (num) => {
-      if (!pdfDoc) return;
+      if (!pdfDoc || !canvasRef.current) return;
+      if (renderTaskRef.current) {
+        await renderTaskRef.current.cancel();
+      }
       setPageRendering(true);
   
       try {
@@ -44,17 +48,24 @@ function PDFPreview({ pdfUrl }) {
           canvasContext: context,
           viewport: viewport,
         };
-        const renderTask = page.render(renderContext);
-        renderTask.promise.then(() => {
+        renderTaskRef.current = page.render(renderContext);
+        renderTaskRef.current.promise.then(() => {
           setPageRendering(false);
           if (pageNumPending !== null) {
             setPageNum(pageNumPending);
             setPageNumPending(null);
           }
+        }).catch(e => {
+          if (e.name !== 'RenderingCancelledException') {
+            console.error("Failed to render page", e);
+            setError("Failed to render PDF page.");
+          }
         });
       } catch (e) {
-        console.error("Failed to render page", e);
-        setError("Failed to render PDF page.");
+        if (e.name !== 'RenderingCancelledException') {
+          console.error("Failed to render page", e);
+          setError("Failed to render PDF page.");
+        }
       }
     }, [pdfDoc, pageNumPending]);
   
@@ -89,6 +100,11 @@ function PDFPreview({ pdfUrl }) {
       if (pdfDoc) {
         renderPage(pageNum);
       }
+      return () => {
+        if (renderTaskRef.current) {
+          renderTaskRef.current.cancel();
+        }
+      };
     }, [pdfDoc, pageNum, renderPage]);
   
     const onPrevPage = () => {
