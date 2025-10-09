@@ -10,7 +10,7 @@ const TabButton = ({ children, onClick, isActive }) => (
     onClick={onClick}
     className={`px-4 py-2 text-sm font-medium ${
       isActive
-        ? 'border-b-2 border-blue-500 text-blue-600'
+        ? 'border-b-2 border-red-400 text-red-600'
         : 'text-gray-500 hover:text-gray-700'
     }`}
   >
@@ -188,7 +188,7 @@ export default function AnnotationsPanel({ pdfUrl }) {
   }
 
   return (
-    <div className="h-full bg-white rounded-md shadow-sm border flex flex-col">
+    <div className="h-full bg-white shadow-sm border flex flex-col">
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-4" aria-label="Tabs">
           <TabButton onClick={() => setActiveTab('pdf')} isActive={activeTab === 'pdf'}>
@@ -200,8 +200,8 @@ export default function AnnotationsPanel({ pdfUrl }) {
         </nav>
       </div>
       <div className="flex-1 overflow-auto">
-        {activeTab === 'pdf' && <PDFPreview pdfUrl={pdfUrl} />}
-        {activeTab === 'youtube' && <YouTubeVideosPanel pdfUrl={pdfUrl} />}
+        {activeTab === 'pdf' && <div className="z-10"><PDFPreview pdfUrl={pdfUrl} /></div>}
+        {activeTab === 'youtube' && <div className="z-20"><YouTubeVideosPanel pdfUrl={pdfUrl} /></div>}
       </div>
     </div>
   );

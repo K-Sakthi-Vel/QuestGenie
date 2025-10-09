@@ -5,7 +5,8 @@ export default function ConfirmDeleteDialog({ isOpen, onClose, onConfirm, title,
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-      <div className="bg-white rounded-lg p-6 shadow-xl w-full max-w-md">
+      <div className="absolute inset-0" onClick={onClose}></div>
+      <div className="bg-white rounded-lg p-6 shadow-xl w-full max-w-md z-10">
         <h2 className="text-lg font-bold mb-4">{title}</h2>
         <div className="mb-6">{children}</div>
         <div className="flex justify-end space-x-4">

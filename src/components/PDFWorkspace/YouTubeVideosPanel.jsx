@@ -22,21 +22,23 @@ const VideoCard = ({ video }) => {
     ? `https://i.ytimg.com/vi/${yt.id}/hqdefault.jpg`
     : null;
 
+  const handleClick = () => {
+    window.open(watchUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <a
-      href={watchUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block group"
+    <div
+      onClick={handleClick}
+      className="block group cursor-pointer"
       aria-label={`Open video for ${title}`}
     >
-      <div className="border rounded-md p-4 mb-4 bg-gray-50 flex gap-4 transition-transform transform group-hover:-translate-y-1 group-hover:shadow-lg">
+      <div className="border rounded-md p-4 mb-4 bg-gray-50 flex gap-4 group-hover:shadow-lg">
         <div className="w-28 flex-shrink-0 overflow-hidden rounded-md">
           {thumbnail ? (
             <img
               src={thumbnail}
               alt={title}
-              className="w-full h-20 object-cover transition-transform duration-300 ease-out transform group-hover:scale-105"
+              className="w-full h-20 object-cover duration-300 ease-out group-hover:scale-105"
             />
           ) : (
             <div className="bg-gray-200 rounded-md w-full h-20 flex items-center justify-center text-xs text-gray-600">
@@ -50,7 +52,7 @@ const VideoCard = ({ video }) => {
           <p className="text-sm text-gray-600 mb-3 line-clamp-3">{description}</p>
         </div>
       </div>
-    </a>
+    </div>
   );
 };
 
@@ -140,7 +142,7 @@ export default function YouTubeVideosPanel({ pdfUrl }) {
           <button
             onClick={fetchYouTubeSuggestions}
             disabled={isLoading}
-            className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 text-sm bg-red-400 text-white rounded hover:bg-red-500 disabled:opacity-50"
           >
             {isLoading ? "Getting Suggestions..." : "Suggest Videos"}
           </button>
@@ -159,13 +161,24 @@ export default function YouTubeVideosPanel({ pdfUrl }) {
 
       <div className="overflow-y-auto flex-1">
         {isLoading && videos.length === 0 ? (
-          <p className="text-gray-500">Loading suggestions…</p>
+          <div className="w-full h-full flex flex-col items-center justify-center p-6">
+            <div
+              className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
+              style={{ borderTopColor: "#f87171" }}
+            />
+            <p className="mt-4 text-gray-600 font-medium">
+              Generating suggestions—this may take a few minutes.
+            </p>
+          </div>
         ) : videos.length > 0 ? (
           videos.map((video, index) => <VideoCard key={index} video={video} />)
         ) : (
-          <p className="text-gray-500">
-            Click "Suggest Videos" to get YouTube recommendations based on the PDF content.
-          </p>
+          <div className="flex items-center justify-center h-full">
+            <p className="text-gray-500 text-center">
+              Click "Suggest Videos" to get YouTube recommendations based on the
+              PDF content.
+            </p>
+          </div>
         )}
       </div>
     </div>

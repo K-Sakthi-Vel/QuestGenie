@@ -89,7 +89,7 @@ export default function QuizRenderer() {
       <div className="w-full h-[100vh] bg-white border rounded-md overflow-auto flex flex-col items-center justify-center p-6">
         <div
           className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
-          style={{ borderTopColor: '#007bff' }}
+          style={{ borderTopColor: '#f87171' }}
         />
         <p className="mt-4 text-gray-600 font-medium">Generating questions — this may take a few minutes.</p>
       </div>
@@ -211,7 +211,7 @@ export default function QuizRenderer() {
         <div className="mt-6 pt-4 border-t flex justify-between items-center">
           <div>
             <button
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+              className="px-4 py-2 bg-red-400 text-white rounded hover:bg-red-500 disabled:bg-gray-400"
               onClick={handleSubmit}
               disabled={!!results}
             >
