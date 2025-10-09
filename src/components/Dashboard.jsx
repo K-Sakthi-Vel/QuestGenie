@@ -10,10 +10,12 @@ export default function Dashboard() {
         quizzesTaken: 0,
         accuracy: 0,
         studyTime: '0h 0m',
+        totalQuestions: 0,
     });
     const [weakTopics, setWeakTopics] = useState([]);
     const [chartData, setChartData] = useState([]);
     const [pieChartData, setPieChartData] = useState([]);
+    const [recentQuizzes, setRecentQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -34,6 +36,7 @@ export default function Dashboard() {
             let correctAnswers = 0;
             const incorrect = [];
             const performanceData = [];
+            const recentQuizzesData = [];
 
             allQuizzes.forEach(quiz => {
                 if (quiz && quiz.questions) {
@@ -48,9 +51,15 @@ export default function Dashboard() {
                             incorrect.push(q.question);
                         }
                     });
+                    const accuracy = (quizCorrect / quiz.questions.length) * 100;
                     performanceData.push({
                         name: quiz.title || quiz.sourceId.substring(0, 15), // Use title, fallback to shortened sourceId
-                        accuracy: (quizCorrect / quiz.questions.length) * 100,
+                        accuracy: accuracy,
+                    });
+                    recentQuizzesData.push({
+                        title: quiz.title || quiz.sourceId.substring(0, 25),
+                        score: `${quizCorrect}/${quiz.questions.length}`,
+                        accuracy: `${Math.round(accuracy)}%`,
                     });
                 }
             });
@@ -65,9 +74,11 @@ export default function Dashboard() {
                 quizzesTaken: allQuizzes.length,
                 accuracy: accuracy,
                 studyTime: formattedStudyTime,
+                totalQuestions: totalQuestions,
             });
             setWeakTopics(incorrect);
             setChartData(performanceData);
+            setRecentQuizzes(recentQuizzesData);
             setPieChartData([
                 { name: 'Correct', value: correctAnswers },
                 { name: 'Incorrect', value: totalQuestions - correctAnswers },
@@ -81,6 +92,7 @@ export default function Dashboard() {
             setWeakTopics([]);
             setChartData([]);
             setPieChartData([]);
+            setRecentQuizzes([]);
         }
         setLoading(false);
     }, [answers, stats]);
@@ -90,8 +102,8 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="p-4 bg-gray-50 h-[calc(100vh-65px)]">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="p-4 bg-gray-50 h-[calc(100vh-65px)] overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h2 className="text-lg font-semibold text-gray-600">Quizzes Taken</h2>
                     <p className="text-4xl font-bold text-indigo-600">{dashboardStats.quizzesTaken}</p>
@@ -104,9 +116,13 @@ export default function Dashboard() {
                     <h2 className="text-lg font-semibold text-gray-600">Total Study Time</h2>
                     <p className="text-4xl font-bold text-blue-600">{dashboardStats.studyTime}</p>
                 </div>
+                <div className="p-6 bg-white rounded-lg shadow-md">
+                    <h2 className="text-lg font-semibold text-gray-600">Total Questions</h2>
+                    <p className="text-4xl font-bold text-purple-600">{dashboardStats.totalQuestions}</p>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <div className="lg:col-span-2 p-6 bg-white rounded-lg shadow-md">
                     <h3 className="font-semibold text-xl mb-4 text-gray-700">Quiz Performance</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -149,6 +165,29 @@ export default function Dashboard() {
                     ) : (
                         <p className="text-sm text-gray-500">No weak topics identified yet. Great job!</p>
                     )}
+                </div>
+            </div>
+            <div className="p-6 bg-white rounded-lg shadow-md">
+                <h3 className="font-semibold text-xl mb-4 text-gray-700">Recent Quizzes</h3>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="text-left py-3 px-4 font-semibold text-sm">Quiz Title</th>
+                                <th className="text-left py-3 px-4 font-semibold text-sm">Score</th>
+                                <th className="text-left py-3 px-4 font-semibold text-sm">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {recentQuizzes.slice(0, 5).map((quiz, index) => (
+                                <tr key={index} className="border-b">
+                                    <td className="py-3 px-4">{quiz.title}</td>
+                                    <td className="py-3 px-4">{quiz.score}</td>
+                                    <td className="py-3 px-4">{quiz.accuracy}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

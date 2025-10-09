@@ -56,24 +56,18 @@ const RightDrawer = ({ chats, onSelectChat, onNewChat, onDeleteChat }) => {
               <div
                 key={chat.id}
                 onClick={() => onSelectChat(chat.id)}
-                className="p-3 mb-2 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:shadow-md transition-all duration-200 group"
+                className="group flex items-center justify-between rounded-md px-3 py-2 cursor-pointer hover:bg-gray-200 transition-colors duration-200"
               >
-                <div className="flex justify-between items-center">
-                  <h3 className="font-semibold text-gray-800 truncate">{chat.title}</h3>
-                  <div className="flex items-center">
-                    <span className="text-xs text-gray-500 mr-2">{chat.timestamp}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openDeleteDialog(chat.id);
-                      }}
-                      className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500"
-                    >
-                      <FiTrash2 />
-                    </button>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 truncate mt-1">{chat.lastMessage}</p>
+                <span className="truncate">{chat.title}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openDeleteDialog(chat.id);
+                  }}
+                  className="text-gray-400 opacity-0 group-hover:opacity-100 hover:text-red-500"
+                >
+                  <FiTrash2 />
+                </button>
               </div>
             ))
           ) : (
