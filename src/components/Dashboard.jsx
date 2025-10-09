@@ -90,6 +90,7 @@ export default function Dashboard() {
                 quizzesTaken: 0,
                 accuracy: 0,
                 studyTime: '0h 0m',
+                totalQuestions: 0,
             });
             setWeakTopics([]);
             setChartData([]);
@@ -100,7 +101,14 @@ export default function Dashboard() {
     }, [answers, stats]);
 
     if (loading) {
-        return <div className="text-center p-10">Loading dashboard...</div>;
+        return (
+            <div className="flex justify-center items-center h-[calc(100vh-60px)]">
+                <div
+                    className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
+                    style={{ borderTopColor: "#f87171" }}
+                />
+            </div>
+        );
     }
 
     return (
@@ -187,13 +195,21 @@ export default function Dashboard() {
                             </tr>
                         </thead>
                         <tbody>
-                            {recentQuizzes.slice(0, 5).map((quiz, index) => (
-                                <tr key={index} className="border-b">
-                                    <td className="py-3 px-4">{quiz.title}</td>
-                                    <td className="py-3 px-4">{quiz.score}</td>
-                                    <td className="py-3 px-4">{quiz.accuracy}</td>
+                            {recentQuizzes.length > 0 ? (
+                                recentQuizzes.slice(0, 5).map((quiz, index) => (
+                                    <tr key={index} className="border-b">
+                                        <td className="py-3 px-4">{quiz.title}</td>
+                                        <td className="py-3 px-4">{quiz.score}</td>
+                                        <td className="py-3 px-4">{quiz.accuracy}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="3" className="text-center py-4 text-gray-500">
+                                        No quizzes taken yet.
+                                    </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>
