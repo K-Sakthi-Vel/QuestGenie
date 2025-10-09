@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePdf } from '../contexts/PdfContext';
 import { useUI } from '../contexts/UIContext';
+import { useQuiz } from '../contexts/QuizContext';
 import PDFWorkspace from './PDFWorkspace';
 import Dashboard from './Dashboard';
 import ChatPanel from './ChatPanel';
@@ -12,7 +13,7 @@ import { LuMenu } from 'react-icons/lu';
 export default function MainContent() {
     const { setSidebarOpen, setActiveView, activeView } = useUI() // Get setActiveView here
     const { addFile, setActiveFile, activeFile, files } = usePdf()
-    const [isGenerating, setIsGenerating] = useState(false)
+    const { loading: isGenerating } = useQuiz()
 
     useEffect(() => {
         // If we're in the questionnaire view, have files, but no active file, set the first one as active.
@@ -120,7 +121,7 @@ export default function MainContent() {
                             onClick={() => document.getElementById('topbar-upload-input').click()}
                             disabled={isGenerating}
                         >
-                            {isGenerating ? 'Generating...' : 'Upload PDF'}
+                            Upload PDF
                         </Button>)
                 }
 

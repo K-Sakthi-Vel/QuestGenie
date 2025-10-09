@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback  } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuiz } from '../../contexts/QuizContext';
 import { usePdf } from '../../contexts/PdfContext'; // Import usePdf
 import ReactMarkdown from 'react-markdown';
@@ -21,7 +21,7 @@ export default function PDFViewer() {
   const [pageNum, setPageNum] = useState(1);
   const [pageRendering, setPageRendering] = useState(false);
   const [pageNumPending, setPageNumPending] = useState(null);
-    console.log('Active file in PDFViewer:', activeFile);
+  console.log('Active file in PDFViewer:', activeFile);
   const renderPage = useCallback(async (num) => {
     if (!pdfDoc || !canvasRef.current) return;
     if (renderTaskRef.current) {
@@ -193,7 +193,7 @@ export default function PDFViewer() {
         const selectedText = (selectedIndex !== null && q.options && q.options[selectedIndex] !== undefined)
           ? q.options[selectedIndex]
           : // if userAnswer stored text (edge-case), accept that too
-            (typeof userAnswer === 'string' ? userAnswer : null);
+          (typeof userAnswer === 'string' ? userAnswer : null);
 
         // Compare either by index (if available) or by text
         if (selectedIndex !== null && correctIndex !== null) {
@@ -243,8 +243,14 @@ export default function PDFViewer() {
             className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
             style={{ borderTopColor: '#f87171' }}
           />
-          <p className="mt-4 text-gray-600 font-medium">Generating quesstions — this may take a few minutes.</p>
+          <div className="mt-4 text-center text-gray-600">
+            <p className="font-semibold text-lg">Generating questions...</p>
+            <p className="mt-1 font-medium">
+              Our AI is analyzing your PDF — larger files with more pages may take a little longer.
+            </p>
+          </div>
         </div>
+
       ) : currentQuiz && currentQuiz.questions && currentQuiz.questions.length > 0 ? (
         <QuizRenderer
           quiz={currentQuiz}
