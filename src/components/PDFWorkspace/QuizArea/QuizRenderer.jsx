@@ -3,15 +3,16 @@ import { useQuiz } from '../../../contexts/QuizContext';
 import ReactMarkdown from 'react-markdown';
 
 export default function QuizRenderer() {
-  const { currentQuiz, loading, answers, submitAnswer, clearAnswersForSource } = useQuiz();
+  const { currentQuiz, loading, submitAnswer, clearAnswersForSource } = useQuiz();
   const [results, setResults] = useState(null);
   const [score, setScore] = useState(null);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [userAnswers, setUserAnswers] = useState({});
 
   const sourceId = currentQuiz?.sourceId;
-  const userAnswers = sourceId ? answers[sourceId] || {} : {};
 
   useEffect(() => {
+    setUserAnswers({}); // Reset answers when quiz changes
     if (sourceId) {
       const storedScore = localStorage.getItem(`quizScore_${sourceId}`);
       if (storedScore) {
@@ -29,13 +30,16 @@ export default function QuizRenderer() {
   }, [sourceId]);
 
   const handleAnswerChange = (questionId, answer) => {
-    if (sourceId) {
-      submitAnswer(sourceId, questionId, answer);
-    }
+    setUserAnswers((prev) => ({ ...prev, [questionId]: answer }));
   };
 
   const handleSubmit = () => {
     if (!currentQuiz || !sourceId) return;
+
+    // Submit all answers to the context so the score gets updated globally
+    Object.entries(userAnswers).forEach(([questionId, answer]) => {
+      submitAnswer(sourceId, questionId, answer);
+    });
 
     const calculatedResults = currentQuiz.questions.map((q) => {
       const userAnswer = userAnswers[q.id];
@@ -75,6 +79,7 @@ export default function QuizRenderer() {
     setResults(null);
     setScore(null);
     setShowAnswers(false);
+    setUserAnswers({});
 
     // Clear results and score from localStorage
     localStorage.removeItem(`quizScore_${sourceId}`);
