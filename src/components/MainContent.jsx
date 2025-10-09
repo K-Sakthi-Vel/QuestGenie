@@ -94,16 +94,16 @@ export default function MainContent() {
                 {
                     activeView === 'dashboard' && <h1 className="text-2xl font-bold text-red-400">Dashboard</h1>
                 }
+                {
+                    activeView === 'chats' && <h1 className="text-2xl font-bold text-red-400">Chats</h1>
+                }
+                {
+                    activeView === 'questionnaire' && <h1 className="text-2xl font-bold text-red-400">AI Quiz Lab</h1>
+                }
+                {
+                    activeView === 'pdf-workspace' && <h1 className="text-2xl font-bold text-red-400">PDF Workspace</h1>
+                }
             </div>
-            {
-                activeView === 'chats' && <h1 className="text-2xl font-bold text-red-400">Chats</h1>
-            }
-            {
-                activeView === 'questionnaire' && <h1 className="text-2xl font-bold text-red-400">AI Quiz Lab</h1>
-            }
-            {
-                activeView === 'pdf-workspace' && <h1 className="text-2xl font-bold text-red-400">PDF Workspace</h1>
-            }
             <div className="flex items-center gap-3">
                 {/* Hidden file input for uploading PDFs */}
                 <input
