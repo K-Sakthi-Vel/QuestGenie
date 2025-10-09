@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback  } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuiz } from '../../contexts/QuizContext';
 import { usePdf } from '../../contexts/PdfContext'; // Import usePdf
 import ReactMarkdown from 'react-markdown';
@@ -16,12 +16,17 @@ export default function PDFViewer() {
   const [score, setScore] = useState(null);
 
   const canvasRef = useRef(null);
+  const renderTaskRef = useRef(null);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pageNum, setPageNum] = useState(1);
   const [pageRendering, setPageRendering] = useState(false);
   const [pageNumPending, setPageNumPending] = useState(null);
-    console.log('Active file in PDFViewer:', activeFile);
+  console.log('Active file in PDFViewer:', activeFile);
   const renderPage = useCallback(async (num) => {
+    if (!pdfDoc || !canvasRef.current) return;
+    if (renderTaskRef.current) {
+      await renderTaskRef.current.cancel();
+    }
     setPageRendering(true);
     const pdfPage = await pdfDoc.getPage(num);
     const viewport = pdfPage.getViewport({ scale: 1.5 });
@@ -35,12 +40,16 @@ export default function PDFViewer() {
       viewport,
     };
 
-    const renderTask = pdfPage.render(renderContext);
-    renderTask.promise.then(() => {
+    renderTaskRef.current = pdfPage.render(renderContext);
+    renderTaskRef.current.promise.then(() => {
       setPageRendering(false);
       if (pageNumPending !== null) {
         setPageNum(pageNumPending);
         setPageNumPending(null);
+      }
+    }).catch(error => {
+      if (error.name !== 'RenderingCancelledException') {
+        console.error('Render error:', error);
       }
     });
   }, [pdfDoc, pageNumPending]);
@@ -49,6 +58,11 @@ export default function PDFViewer() {
     if (pdfDoc) {
       renderPage(pageNum);
     }
+    return () => {
+      if (renderTaskRef.current) {
+        renderTaskRef.current.cancel();
+      }
+    };
   }, [pdfDoc, pageNum, renderPage]);
 
   useEffect(() => {
@@ -179,7 +193,7 @@ export default function PDFViewer() {
         const selectedText = (selectedIndex !== null && q.options && q.options[selectedIndex] !== undefined)
           ? q.options[selectedIndex]
           : // if userAnswer stored text (edge-case), accept that too
-            (typeof userAnswer === 'string' ? userAnswer : null);
+          (typeof userAnswer === 'string' ? userAnswer : null);
 
         // Compare either by index (if available) or by text
         if (selectedIndex !== null && correctIndex !== null) {
@@ -221,28 +235,22 @@ export default function PDFViewer() {
     alert('Your answers have been submitted!');
   };
 
-  if (loading) {
-    return (
-      <div className="w-full h-[calc(100vh-65px)] bg-white border overflow-auto flex flex-col items-center justify-center p-6">
-        <div
-          className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
-          style={{ borderTopColor: '#007bff' }}
-        />
-        <p className="mt-4 text-gray-600 font-medium">Generating questions — this may take a few minutes.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-[100%] bg-white border overflow-hidden flex flex-col">
       {loading ? (
         <div className="w-full h-full flex flex-col items-center justify-center p-6">
           <div
             className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
-            style={{ borderTopColor: '#007bff' }}
+            style={{ borderTopColor: '#f87171' }}
           />
-          <p className="mt-4 text-gray-600 font-medium">Generating questions — this may take a few minutes.</p>
+          <div className="mt-4 text-center text-gray-600">
+            <p className="font-semibold text-lg">Generating questions...</p>
+            <p className="mt-1 font-medium">
+              Our AI is analyzing your PDF — larger files with more pages may take a little longer.
+            </p>
+          </div>
         </div>
+
       ) : currentQuiz && currentQuiz.questions && currentQuiz.questions.length > 0 ? (
         <QuizRenderer
           quiz={currentQuiz}
