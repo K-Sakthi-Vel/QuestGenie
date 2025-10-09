@@ -6,6 +6,7 @@ export default function ChatPanel() {
     const [chats, setChats] = useState([]);
     const [activeChatId, setActiveChatId] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [isRightDrawerOpen, setRightDrawerOpen] = useState(false);
 
     useEffect(() => {
         if (activeChatId) {
@@ -101,6 +102,7 @@ export default function ChatPanel() {
                     activeChat={activeChat}
                     messages={messages}
                     onMessagesChange={setMessages}
+                    onToggleDrawer={() => setRightDrawerOpen(!isRightDrawerOpen)}
                 />
             </div>
             <RightDrawer 
@@ -108,6 +110,8 @@ export default function ChatPanel() {
                 onSelectChat={handleSelectChat}
                 onNewChat={handleNewChat}
                 onDeleteChat={handleDeleteChat}
+                isOpen={isRightDrawerOpen}
+                onClose={() => setRightDrawerOpen(false)}
             />
         </div>
     );

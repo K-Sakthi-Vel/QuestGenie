@@ -6,6 +6,7 @@ import Dashboard from './Dashboard';
 import ChatPanel from './ChatPanel';
 import Button from './primitives/Button'
 import { putPdf } from '../utils/idbHelper' // Import IndexedDB putPdf
+import { LuMenu } from 'react-icons/lu';
 
 
 export default function MainContent() {
@@ -86,9 +87,14 @@ export default function MainContent() {
 
     return <main className="flex-1 h-100VH">
         <div className='h-[65px] w-full border-b bg-gray-50 flex items-center justify-between px-6'>
-            {
-                activeView === 'dashboard' && <h1 className="text-2xl font-bold text-red-400">Dashboard</h1>
-            }
+            <div className="flex items-center gap-4">
+                <button className="text-gray-600 md:hidden" onClick={() => setSidebarOpen(true)}>
+                    <LuMenu size={24} />
+                </button>
+                {
+                    activeView === 'dashboard' && <h1 className="text-2xl font-bold text-red-400">Dashboard</h1>
+                }
+            </div>
             {
                 activeView === 'chats' && <h1 className="text-2xl font-bold text-red-400">Chats</h1>
             }

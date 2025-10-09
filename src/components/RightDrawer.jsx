@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { FiSearch, FiPlus, FiTrash2 } from 'react-icons/fi';
+import { FiSearch, FiPlus, FiTrash2, FiX } from 'react-icons/fi';
 import ConfirmDeleteDialog from './primitives/ConfirmDeleteDialog';
 
-const RightDrawer = ({ chats, onSelectChat, onNewChat, onDeleteChat }) => {
+const RightDrawer = ({ chats, onSelectChat, onNewChat, onDeleteChat, isOpen, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [chatToDelete, setChatToDelete] = useState(null);
@@ -30,7 +30,13 @@ const RightDrawer = ({ chats, onSelectChat, onNewChat, onDeleteChat }) => {
 
   return (
     <>
-      <div className="w-80 bg-gray-50 border-l border-gray-200 flex flex-col h-full">
+      <div className={`w-80 bg-gray-50 border-l border-gray-200 flex flex-col h-full fixed top-0 right-0 z-30 transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'} md:static md:translate-x-0`}>
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+          <h3 className="font-semibold text-lg">Chats</h3>
+          <button onClick={onClose} className="text-gray-600 md:hidden">
+            <FiX size={24} />
+          </button>
+        </div>
         <div className="p-4 border-b border-gray-200">
           <div className="relative">
             <FiSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400" />

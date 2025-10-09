@@ -14,15 +14,15 @@ export default function Sidebar() {
     ];
 
     return (
-        <aside className={`bg-gray-50 border-r h-screen sticky top-0 flex flex-col transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
+        <aside className={`bg-gray-50 border-r h-screen fixed top-0 left-0 z-20 flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:sticky md:translate-x-0 ${sidebarOpen ? 'w-64' : 'md:w-20'}`}>
             <div className="px-4 py-3 border-b flex items-center justify-between">
-                {sidebarOpen && <div className={`flex items-center gap-2 ${!sidebarOpen && 'justify-center w-full'}`}>
+                <div className={`flex items-center gap-2 ${!sidebarOpen && 'md:justify-center w-full'}`}>
                     <img src={Logo} alt="Logo" className="h-10 w-10" />
-                    <span className="font-bold text-2xl tracking-widest text-red-500 whitespace-nowrap">
+                    <span className={`font-bold text-2xl tracking-widest text-red-500 whitespace-nowrap ${!sidebarOpen && 'md:hidden'}`}>
                         Q GENIE
                     </span>
-                </div>}
-                <button className="text-gray-600 ml-3" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                </div>
+                <button className="text-gray-600 ml-3 md:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
                     <LuMenu size={24} />
                 </button>
             </div>
@@ -39,7 +39,7 @@ export default function Sidebar() {
                             onClick={() => setActiveView(item.id)}
                         >
                             {item.icon}
-                            {sidebarOpen && <span>{item.label}</span>}
+                            <span className={`${!sidebarOpen && 'md:hidden'}`}>{item.label}</span>
                         </div>
                     )
                 })}

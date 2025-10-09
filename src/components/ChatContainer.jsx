@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FiPaperclip, FiSend, FiThumbsUp, FiBookOpen } from 'react-icons/fi';
+import { FiPaperclip, FiSend, FiThumbsUp, FiBookOpen, FiMessageSquare } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -53,7 +53,7 @@ const LoadingIndicator = () => (
     </div>
   );
 
-const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend }) => {
+const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, onToggleDrawer }) => {
   const [inputValue, setInputValue] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [sseReady, setSseReady] = useState(false);
@@ -192,6 +192,11 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend }) 
 
   return (
     <div className="flex flex-col h-full bg-white">
+      <div className="p-4 border-b border-gray-200 flex justify-end md:hidden">
+        <button onClick={onToggleDrawer} className="text-gray-600">
+          <FiMessageSquare size={24} />
+        </button>
+      </div>
       <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
         {messages.length === 0 ? (
           <WelcomeMessage />

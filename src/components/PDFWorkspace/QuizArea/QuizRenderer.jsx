@@ -208,8 +208,8 @@ export default function QuizRenderer() {
           </div>
         </div>
 
-        <div className="mt-6 pt-4 border-t flex justify-between items-center">
-          <div>
+        <div className="mt-6 pt-4 border-t flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               className="px-4 py-2 bg-red-400 text-white rounded hover:bg-red-500 disabled:bg-gray-400"
               onClick={handleSubmit}
@@ -220,13 +220,13 @@ export default function QuizRenderer() {
             {results && (
               <>
                 <button
-                  className="ml-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                   onClick={() => setShowAnswers(!showAnswers)}
                 >
                   {showAnswers ? 'Hide Answers' : 'View Answers'}
                 </button>
                 <button
-                  className="ml-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                  className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                   onClick={handleReattempt}
                 >
                   Re-attempt
@@ -235,7 +235,7 @@ export default function QuizRenderer() {
             )}
           </div>
           {score !== null && (
-            <div className="font-semibold text-lg">
+            <div className="font-semibold text-lg text-center sm:text-right">
               Your Score: {score} / {currentQuiz.questions.length}
             </div>
           )}

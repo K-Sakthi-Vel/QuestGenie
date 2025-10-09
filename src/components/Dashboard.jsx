@@ -103,27 +103,27 @@ export default function Dashboard() {
 
     return (
         <div className="p-4 bg-gray-50 h-[calc(100vh-65px)] overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h2 className="text-lg font-semibold text-gray-600">Quizzes Taken</h2>
-                    <p className="text-4xl font-bold text-indigo-600">{dashboardStats.quizzesTaken}</p>
+                    <p className="text-3xl sm:text-4xl font-bold text-indigo-600">{dashboardStats.quizzesTaken}</p>
                 </div>
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h2 className="text-lg font-semibold text-gray-600">Overall Accuracy</h2>
-                    <p className="text-4xl font-bold text-green-600">{dashboardStats.accuracy}%</p>
+                    <p className="text-3xl sm:text-4xl font-bold text-green-600">{dashboardStats.accuracy}%</p>
                 </div>
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h2 className="text-lg font-semibold text-gray-600">Total Study Time</h2>
-                    <p className="text-4xl font-bold text-blue-600">{dashboardStats.studyTime}</p>
+                    <p className="text-3xl sm:text-4xl font-bold text-blue-600">{dashboardStats.studyTime}</p>
                 </div>
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h2 className="text-lg font-semibold text-gray-600">Total Questions</h2>
-                    <p className="text-4xl font-bold text-purple-600">{dashboardStats.totalQuestions}</p>
+                    <p className="text-3xl sm:text-4xl font-bold text-purple-600">{dashboardStats.totalQuestions}</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div className="lg:col-span-2 p-6 bg-white rounded-lg shadow-md">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div className="md:col-span-2 p-6 bg-white rounded-lg shadow-md">
                     <h3 className="font-semibold text-xl mb-4 text-gray-700">Quiz Performance</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>

@@ -235,27 +235,15 @@ export default function PDFViewer() {
     alert('Your answers have been submitted!');
   };
 
-  if (loading) {
-    return (
-      <div className="w-full h-[calc(100vh-65px)] bg-white border overflow-auto flex flex-col items-center justify-center p-6">
-        <div
-          className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
-          style={{ borderTopColor: '#007bff' }}
-        />
-        <p className="mt-4 text-gray-600 font-medium">Generating questions — this may take a few minutes.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-[100%] bg-white border overflow-hidden flex flex-col">
       {loading ? (
         <div className="w-full h-full flex flex-col items-center justify-center p-6">
           <div
             className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
-            style={{ borderTopColor: '#007bff' }}
+            style={{ borderTopColor: '#f87171' }}
           />
-          <p className="mt-4 text-gray-600 font-medium">Generating questions — this may take a few minutes.</p>
+          <p className="mt-4 text-gray-600 font-medium">Generating quesstions — this may take a few minutes.</p>
         </div>
       ) : currentQuiz && currentQuiz.questions && currentQuiz.questions.length > 0 ? (
         <QuizRenderer
