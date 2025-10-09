@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FiPaperclip, FiSend, FiThumbsUp, FiBookOpen, FiMessageSquare } from 'react-icons/fi';
+import { FaHistory } from "react-icons/fa";
+
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -194,7 +196,7 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
     <div className="flex flex-col h-full bg-white">
       <div className="p-4 border-b border-gray-200 flex justify-end md:hidden">
         <button onClick={onToggleDrawer} className="text-gray-600">
-          <FiMessageSquare size={24} />
+          <FaHistory  size={24} />
         </button>
       </div>
       <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
