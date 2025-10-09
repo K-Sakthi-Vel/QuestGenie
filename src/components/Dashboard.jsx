@@ -48,7 +48,9 @@ export default function Dashboard() {
                             correctAnswers++;
                             quizCorrect++;
                         } else {
-                            incorrect.push(q.question);
+                            const cleanedQuestion = q.question.replace(/^\W*Question\W*/i, '');
+                            const truncatedQuestion = cleanedQuestion.length > 100 ? `${cleanedQuestion.substring(0, 100)}...` : cleanedQuestion;
+                            incorrect.push(truncatedQuestion);
                         }
                     });
                     const accuracy = (quizCorrect / quiz.questions.length) * 100;
@@ -157,11 +159,17 @@ export default function Dashboard() {
                 <div className="p-6 bg-white rounded-lg shadow-md">
                     <h3 className="font-semibold text-xl mb-4 text-gray-700">Areas for Improvement</h3>
                     {weakTopics.length > 0 ? (
-                        <ul className="space-y-2">
-                            {weakTopics.slice(0, 5).map((topic, index) => ( // Show top 5
-                                <li key={index} className="text-sm p-2 bg-red-50 rounded-md">{topic}</li>
-                            ))}
-                        </ul>
+                        <>
+                            <p className="text-sm text-gray-600 mb-2">Here are some topics you might want to review:</p>
+                            <ul className="space-y-2">
+                                {weakTopics.slice(0, 5).map((topic, index) => (
+                                    <li key={index} className="text-sm p-2 bg-red-50 rounded-md flex items-center">
+                                        <span className="text-red-500 font-bold mr-2">&#8226;</span>
+                                        <span>{topic}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
                     ) : (
                         <p className="text-sm text-gray-500">No weak topics identified yet. Great job!</p>
                     )}

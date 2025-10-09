@@ -188,7 +188,7 @@ export default function AnnotationsPanel({ pdfUrl }) {
   }
 
   return (
-    <div className="h-full bg-white shadow-sm border flex flex-col">
+    <div className="h-[calc(100vh-60px)] bg-white shadow-sm border flex flex-col overflow-y-auto">
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-4" aria-label="Tabs">
           <TabButton onClick={() => setActiveTab('pdf')} isActive={activeTab === 'pdf'}>
