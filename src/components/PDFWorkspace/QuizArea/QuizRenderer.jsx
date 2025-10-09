@@ -70,7 +70,7 @@ export default function QuizRenderer() {
 
     localStorage.setItem(`quizScore_${sourceId}`, JSON.stringify(totalScore));
     localStorage.setItem(`quizResults_${sourceId}`, JSON.stringify(calculatedResults));
-    toast.success(`Your score: ${totalScore} / ${currentQuiz.questions.length}`);
+    toast.success(`Answers submitted!`);
   };
 
   const handleReattempt = () => {
