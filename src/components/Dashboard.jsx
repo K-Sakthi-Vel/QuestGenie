@@ -48,7 +48,8 @@ export default function Dashboard() {
                             correctAnswers++;
                             quizCorrect++;
                         } else {
-                            const cleanedQuestion = q.question.replace(/^\W*Question\W*/i, '');
+                            const questionText = q.question || q.error || 'Unknown question';
+                            const cleanedQuestion = questionText.replace(/^\W*Question\W*/i, '');
                             const truncatedQuestion = cleanedQuestion.length > 100 ? `${cleanedQuestion.substring(0, 100)}...` : cleanedQuestion;
                             incorrect.push(truncatedQuestion);
                         }
