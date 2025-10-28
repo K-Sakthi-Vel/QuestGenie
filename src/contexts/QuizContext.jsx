@@ -1,9 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { usePdf } from './PdfContext'; // Re-import usePdf
 
 const QuizContext = createContext();
 export const useQuiz = () => useContext(QuizContext);
 
-export function QuizProvider({ children }) {
+export function QuizProvider({ children, useMockData }) {
+    const { activeFile } = usePdf(); // Re-introduce activeFile dependency
     const [currentQuiz, setCurrentQuiz] = useState(null);
     const [answers, setAnswers] = useState(() => {
         try {
@@ -15,6 +17,25 @@ export function QuizProvider({ children }) {
         }
     });
     const [loading, setLoading] = useState(false);
+    const [quizGenerated, setQuizGenerated] = useState(false); // New state variable
+
+    useEffect(() => {
+        setLoading(false); // Always reset loading state when activeFile changes
+
+        if (activeFile && activeFile.id) {
+            const localQuiz = localStorage.getItem(`quiz_${activeFile.id}`);
+            if (localQuiz) {
+                setCurrentQuiz(JSON.parse(localQuiz));
+                setQuizGenerated(true); // Set to true if quiz exists for the active file
+            } else {
+                setCurrentQuiz(null);
+                setQuizGenerated(false); // No quiz for this file, so reset
+            }
+        } else {
+            setCurrentQuiz(null);
+            setQuizGenerated(false); // No active file, so reset
+        }
+    }, [activeFile]); // Re-add activeFile dependency
 
     useEffect(() => {
         try {
@@ -44,18 +65,42 @@ export function QuizProvider({ children }) {
         }));
     };
 
-    const fetchQuizForSource = async (sourceId) => {
+    const fetchQuizForSource = async (sourceId, pdfFile) => {
         setLoading(true);
         try {
+            // First, try to load from local storage
             const localQuiz = localStorage.getItem(`quiz_${sourceId}`);
             if (localQuiz) {
                 setCurrentQuiz(JSON.parse(localQuiz));
-            } else {
-                setCurrentQuiz(null);
+                setQuizGenerated(true); // Set to true when loaded from local storage
+                setLoading(false);
+                return;
             }
+
+            // If not in local storage, make API call
+            const formData = new FormData();
+            formData.append('file', pdfFile); // Assuming pdfFile is available here
+            formData.append('sourceId', sourceId);
+            formData.append('useMockData', useMockData); // Pass the mock data flag
+
+            const response = await fetch('http://localhost:5000/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setCurrentQuiz(data);
+            localStorage.setItem(`quiz_${sourceId}`, JSON.stringify(data)); // Cache the fetched quiz
+            setQuizGenerated(true); // Set to true after successful API call
+
         } catch (error) {
             console.error("Error fetching quiz for source:", sourceId, error);
             setCurrentQuiz(null);
+            setQuizGenerated(false); // Reset if there's an error
         } finally {
             setLoading(false);
         }
@@ -113,7 +158,7 @@ export function QuizProvider({ children }) {
     };
 
     return (
-        <QuizContext.Provider value={{ currentQuiz, setCurrentQuiz: customSetCurrentQuiz, answers, submitAnswer, loading, setLoading, fetchQuizForSource, clearQuiz, clearAnswersForSource, getScoreForSource }}>
+        <QuizContext.Provider value={{ currentQuiz, setCurrentQuiz: customSetCurrentQuiz, answers, submitAnswer, loading, setLoading, fetchQuizForSource, clearQuiz, clearAnswersForSource, getScoreForSource, quizGenerated, setQuizGenerated }}>
             {children}
         </QuizContext.Provider>
     );

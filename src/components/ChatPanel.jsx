@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ChatContainer from './ChatContainer';
 import RightDrawer from './RightDrawer';
 
-export default function ChatPanel() {
+export default function ChatPanel({ useMockData }) {
     const [chats, setChats] = useState([]);
     const [activeChatId, setActiveChatId] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -103,6 +103,7 @@ export default function ChatPanel() {
                     messages={messages}
                     onMessagesChange={setMessages}
                     onToggleDrawer={() => setRightDrawerOpen(!isRightDrawerOpen)}
+                    useMockData={useMockData}
                 />
             </div>
             <RightDrawer 

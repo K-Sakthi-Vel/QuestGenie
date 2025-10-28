@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import YouTubeVideosPanel from './YouTubeVideosPanel';
+import { usePdf } from '../../contexts/PdfContext'; // Import usePdf to get activeFile
+import { getPdfBlob } from '../../utils/idbHelper'; // Import getPdfBlob
 
 // Set the worker source for pdf.js
 pdfjs.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.min.js`;
@@ -176,8 +178,9 @@ function PDFPreview({ pdfUrl }) {
     );
 }
 
-export default function AnnotationsPanel({ pdfUrl }) {
+export default function AnnotationsPanel({ pdfUrl, useMockData }) { // Receive useMockData prop
   const [activeTab, setActiveTab] = useState('pdf');
+  const { activeFile } = usePdf(); // Get activeFile from context
 
   if (!pdfUrl) {
     return (
@@ -201,7 +204,7 @@ export default function AnnotationsPanel({ pdfUrl }) {
       </div>
       <div className="flex-1 overflow-auto">
         {activeTab === 'pdf' && <div className="z-10"><PDFPreview pdfUrl={pdfUrl} /></div>}
-        {activeTab === 'youtube' && <div className="z-20"><YouTubeVideosPanel pdfUrl={pdfUrl} /></div>}
+        {activeTab === 'youtube' && <div className="z-20"><YouTubeVideosPanel pdfFile={activeFile} useMockData={useMockData} /></div>}
       </div>
     </div>
   );

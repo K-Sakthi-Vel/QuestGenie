@@ -10,7 +10,7 @@ import { putPdf } from '../utils/idbHelper' // Import IndexedDB putPdf
 import { LuMenu } from 'react-icons/lu';
 
 
-export default function MainContent() {
+export default function MainContent({ useMockData }) {
     const { setSidebarOpen, setActiveView, activeView } = useUI() // Get setActiveView here
     const { addFile, setActiveFile, activeFile, files } = usePdf()
     const { loading: isGenerating } = useQuiz()
@@ -62,12 +62,12 @@ export default function MainContent() {
             case 'dashboard':
                 return <Dashboard />;
             case 'chats':
-                return <ChatPanel />;
+                return <ChatPanel useMockData={useMockData} />;
             case 'questionnaire':
                 // If there are files, show the workspace. The active file will be set by the effect
                 // or will be the one already selected.
                 if (files && files.length > 0) {
-                    return <PDFWorkspace selectedQuestionnaire={{ pdfFile: activeFile || files[0] }} />;
+                    return <PDFWorkspace selectedQuestionnaire={{ pdfFile: activeFile || files[0] }} useMockData={useMockData} />;
                 }
                 // If there are no files, show the placeholder.
                 return (
@@ -80,7 +80,7 @@ export default function MainContent() {
                 );
             case 'pdf-workspace':
                 // Always render PDFWorkspace. It handles the case where pdfUrl is null internally.
-                return <PDFWorkspace selectedQuestionnaire={{ pdfFile: activeFile }} />;
+                return <PDFWorkspace selectedQuestionnaire={{ pdfFile: activeFile }} useMockData={useMockData} />;
             default:
                 return <Dashboard />;
         }
