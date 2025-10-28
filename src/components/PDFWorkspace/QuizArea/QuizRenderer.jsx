@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useQuiz } from '../../../contexts/QuizContext';
 import ReactMarkdown from 'react-markdown';
+import mockQuiz from '../../../sample-payloads/mockQuiz.json';
 
-export default function QuizRenderer() {
-  const { currentQuiz, loading, submitAnswer, clearAnswersForSource } = useQuiz();
+export default function QuizRenderer({ useMockData }) {
+  const { currentQuiz, loading, submitAnswer, clearAnswersForSource, quizGenerated } = useQuiz(); // Use currentQuiz directly from context, remove actualQuiz
+  // Removed mockLoading state and its useEffect as mock data loading is handled in QuizContext/PDFToolbar
   const [results, setResults] = useState(null);
   const [score, setScore] = useState(null);
   const [showAnswers, setShowAnswers] = useState(false);
   const [userAnswers, setUserAnswers] = useState({});
 
-  const sourceId = currentQuiz?.sourceId;
+  const sourceId = currentQuiz?.sourceId || null; // sourceId should come from currentQuiz
 
   useEffect(() => {
     setUserAnswers({}); // Reset answers when quiz changes
@@ -28,7 +30,7 @@ export default function QuizRenderer() {
         setResults(null);
       }
     }
-  }, [sourceId]);
+  }, [sourceId]); // Removed useMockData from dependency array
 
   const handleAnswerChange = (questionId, answer) => {
     setUserAnswers((prev) => ({ ...prev, [questionId]: answer }));
@@ -90,19 +92,23 @@ export default function QuizRenderer() {
     clearAnswersForSource(sourceId);
   };
 
-  if (loading) {
+  if (loading) { // Removed mockLoading from the condition
     return (
-      <div className="w-full h-[100vh] bg-white border rounded-md overflow-auto flex flex-col items-center justify-center p-6">
+      <div className="w-full h-[calc(100vh-122px)] bg-white border rounded-md overflow-auto flex flex-col items-center justify-center p-6">
         <div
           className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"
           style={{ borderTopColor: '#f87171' }}
         />
-        <p className="mt-4 text-gray-600 font-medium">Generating questions — this may take a few minutes.</p>
+        <p className="mt-4 text-gray-600 font-medium">
+          Generating questions — this may take a few seconds.
+          {useMockData && ' (Returning mock data for demonstration purposes.)'}
+        </p>
       </div>
     );
   }
 
-  if (currentQuiz) {
+  // Only render the quiz if quizGenerated is true and currentQuiz exists
+  if (quizGenerated && currentQuiz) {
     return (
       <div className="w-full h-[calc(100vh-122px)] bg-white border rounded-md p-4 flex flex-col">
         <div className="font-semibold mb-4 text-lg">Generated Quiz</div>
@@ -250,9 +256,15 @@ export default function QuizRenderer() {
     );
   }
 
+  // Only render the quiz if quizGenerated is true
+  // If quiz is not generated or currentQuiz is null, show the "No quiz generated yet" message
   return (
-    <div className="w-full h-[70vh] bg-white border rounded-md overflow-auto flex items-center justify-center">
-      <div className="text-gray-400">PDF Viewer placeholder (use PDF.js or viewer library)</div>
-    </div>
+     <div className="w-full h-[70vh] flex flex-col items-center justify-center text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 className="text-lg font-medium text-gray-600">Curious about what's in your PDF?</h3>
+        <p className="text-gray-400 mt-1">Let our AI generate some questions for you. Get started from the panel on the right.</p>
+      </div>
   );
 }

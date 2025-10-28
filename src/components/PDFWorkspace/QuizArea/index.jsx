@@ -1,10 +1,10 @@
 import React from 'react';
 import QuizRenderer from './QuizRenderer';
 
-export default function QuizArea() {
+export default function QuizArea({ useMockData }) {
   return (
-    <div className="mt-4">
-      <QuizRenderer />
+    <div>
+      <QuizRenderer useMockData={useMockData} />
     </div>
   );
 }

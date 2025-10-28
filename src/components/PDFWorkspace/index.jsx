@@ -4,7 +4,7 @@ import PDFViewer from './PDFViewer';
 import AnnotationsPanel from './AnnotationsPanel';
 import QuizArea from './QuizArea';
 
-export default function PDFWorkspace({ selectedQuestionnaire }) {
+export default function PDFWorkspace({ selectedQuestionnaire, useMockData }) {
     const [pdfUrl, setPdfUrl] = useState(null);
     const [activeTab, setActiveTab] = useState('viewer'); // 'viewer' or 'annotations'
 
@@ -41,16 +41,16 @@ export default function PDFWorkspace({ selectedQuestionnaire }) {
                 {/* Left Panel */}
                 <div className={`lg:col-span-8 h-full flex-col ${activeTab === 'viewer' ? 'flex' : 'hidden'} lg:flex`}>
                     <div className="shrink-0">
-                        <PDFToolbar />
+                        <PDFToolbar useMockData={useMockData} />
                     </div>
                     <div className="flex-1 overflow-hidden">
-                        <PDFViewer pdfUrl={pdfUrl} />
+                        <QuizArea pdfUrl={pdfUrl} useMockData={useMockData} />
                     </div>
                 </div>
 
                 {/* Right Panel */}
                 <aside className={`lg:col-span-4 h-full overflow-y-auto ${activeTab === 'annotations' ? 'block' : 'hidden'} lg:block`}>
-                    <AnnotationsPanel pdfUrl={pdfUrl} />
+                    <AnnotationsPanel pdfUrl={pdfUrl} useMockData={useMockData} />
                 </aside>
             </div>
         </div>

@@ -8,7 +8,7 @@ import ConfirmDeleteDialog from './primitives/ConfirmDeleteDialog';
 export default function SourceList() {
     const { files, activeFile, setActiveFile, deleteFile } = usePdf();
     const { setActiveView } = useUI();
-    const { getScoreForSource } = useQuiz();
+    const { getScoreForSource, clearQuiz } = useQuiz();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [fileToDelete, setFileToDelete] = useState(null);
 
@@ -30,6 +30,7 @@ export default function SourceList() {
     const handleDeleteConfirm = async () => {
         if (fileToDelete) {
             await deleteFile(fileToDelete);
+            clearQuiz(fileToDelete); // Clear quiz data after deleting the file
         }
         closeDeleteDialog();
     };

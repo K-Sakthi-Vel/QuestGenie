@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { FiPaperclip, FiSend, FiThumbsUp, FiBookOpen, FiMessageSquare } from 'react-icons/fi';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { FiPaperclip, FiSend, FiBookOpen, FiArrowDownCircle } from 'react-icons/fi';
 import { FaHistory } from "react-icons/fa";
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
 const WelcomeMessage = () => (
   <div className="flex flex-col items-center justify-center h-full text-gray-500">
@@ -55,17 +57,37 @@ const LoadingIndicator = () => (
     </div>
   );
 
-const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, onToggleDrawer }) => {
+const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, onToggleDrawer, useMockData }) => {
   const [inputValue, setInputValue] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [sseReady, setSseReady] = useState(false);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const [inputAreaHeight, setInputAreaHeight] = useState(0); // New state for input area height
   const esRef = useRef(null);
   const sseConnectionPromise = useRef(null);
   const resolveSseConnectionPromise = useRef(null);
   const scrollRef = useRef(null);
   const textareaRef = useRef(null);
+  const inputAreaRef = useRef(null); // New ref for the input area
 
   const setMessages = onMessagesChange;
+
+  const scrollToBottom = useCallback(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+      const isAtBottom = scrollHeight - scrollTop <= clientHeight + 10; // +10 for a small buffer
+      setShowScrollToBottom(!isAtBottom);
+    }
+  }, []);
 
   useEffect(() => {
     if (!activeChat?.id) return;
@@ -79,7 +101,9 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
       resolveSseConnectionPromise.current = resolve;
     });
 
-    const es = new EventSource(`${process.env.REACT_APP_BACKEND_URL}/api/chat/stream/${activeChat.id}`);
+    // Pass useMockData as a query parameter for the SSE stream
+    const streamEndpoint = `${BACKEND_URL}/api/chat/stream/${activeChat.id}?useMockData=${useMockData}`;
+    const es = new EventSource(streamEndpoint);
     esRef.current = es;
 
     es.onopen = () => {
@@ -108,6 +132,7 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
 
     es.addEventListener('done', () => {
       setStreaming(false);
+      scrollToBottom(); // Scroll to bottom once streaming is done
     });
 
     es.onerror = () => {
@@ -122,14 +147,7 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
       }
       setSseReady(false);
     };
-  }, [activeChat?.id]);
-
-  function scrollToBottom() {
-    if (!scrollRef.current) return;
-    requestAnimationFrame(() => {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    });
-  }
+  }, [activeChat?.id, setMessages, scrollToBottom]);
 
   const sendMessageToServer = async (text) => {
     if (!activeChat?.id) return;
@@ -147,7 +165,7 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
       await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chatId: activeChat.id, message: text }),
+        body: JSON.stringify({ chatId: activeChat.id, message: text, useMockData }), // Include useMockData
       });
 
       setStreaming(true);
@@ -184,21 +202,58 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages.length]);
+  }, [messages.length, scrollToBottom]);
 
   useEffect(() => {
     if (streaming) {
       scrollToBottom();
     }
-  }, [streaming]);
+  }, [streaming, scrollToBottom]);
+
+  useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (scrollElement) {
+      scrollElement.addEventListener('scroll', handleScroll);
+      handleScroll(); // Initial check
+      return () => scrollElement.removeEventListener('scroll', handleScroll);
+    }
+  }, [handleScroll]);
+
+  // Effect to measure the height of the input area
+  useEffect(() => {
+    const updateInputAreaHeight = () => {
+      if (inputAreaRef.current) {
+        setInputAreaHeight(inputAreaRef.current.offsetHeight);
+      }
+    };
+
+    updateInputAreaHeight(); // Initial height calculation
+
+    // Add event listener for window resize to recalculate height
+    window.addEventListener('resize', updateInputAreaHeight);
+
+    // Also observe mutations in case content changes without resize (e.g., text wrapping)
+    const observer = new MutationObserver(updateInputAreaHeight);
+    if (inputAreaRef.current) {
+      observer.observe(inputAreaRef.current, { childList: true, subtree: true, attributes: true });
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateInputAreaHeight);
+      observer.disconnect();
+    };
+  }, []);
+
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-white relative"> {/* parent is relative */}
       <div className="p-4 border-b border-gray-200 flex justify-end md:hidden">
         <button onClick={onToggleDrawer} className="text-gray-600">
-          <FaHistory  size={24} />
+          <FaHistory size={24} />
         </button>
       </div>
+
+      {/* messages scroll area */}
       <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
         {messages.length === 0 ? (
           <WelcomeMessage />
@@ -211,12 +266,56 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
         )}
         {streaming && <LoadingIndicator />}
       </div>
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex space-x-2 mb-2">
-          <button className="flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700">
-            <FiThumbsUp className="mr-2" /> Recommended
+
+      {/* Scroll-to-bottom button — positioned absolutely inside the relative parent so it stays at bottom center above the suggested questions */}
+      {showScrollToBottom && inputAreaHeight > 0 && ( // Only show if height is measured
+        <div
+          className="absolute left-1/2 -translate-x-1/2 z-50"
+          style={{ bottom: `${inputAreaHeight + 16}px` }} // Dynamically adjust based on inputAreaHeight + padding
+        >
+          <button
+            onClick={scrollToBottom}
+            className="bg-red-400 text-white p-2 rounded-full shadow-lg hover:bg-red-500 transition-colors opacity-90 hover:opacity-100"
+            title="Scroll to bottom"
+          >
+            <FiArrowDownCircle size={24} />
           </button>
         </div>
+      )}
+
+      {/* input + suggested questions area (kept as you had it) */}
+      <div ref={inputAreaRef} className="p-4 border-t border-gray-200"> {/* Added ref here */}
+        <div className="flex flex-wrap gap-2 mb-2">
+          <button
+            onClick={() => sendMessageToServer("Hello")}
+            className="flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700"
+            disabled={streaming}
+          >
+            Hello
+          </button>
+          <button
+            onClick={() => sendMessageToServer("What can you do?")}
+            className="flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700"
+            disabled={streaming}
+          >
+            What can you do?
+          </button>
+          <button
+            onClick={() => sendMessageToServer("Explain the quadratic formula.")}
+            className="flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700"
+            disabled={streaming}
+          >
+            Explain the quadratic formula.
+          </button>
+          <button
+            onClick={() => sendMessageToServer("Explain a basic physics concept.")}
+            className="flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700"
+            disabled={streaming}
+          >
+            Explain a basic physics concept.
+          </button>
+        </div>
+
         <div className="relative flex items-center">
           <textarea
             ref={textareaRef}
@@ -227,15 +326,16 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
             className="w-full p-3 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400 resize-none"
             rows={1}
             style={{ maxHeight: '150px', minHeight: '40px', overflowY: 'hidden' }}
+            disabled={streaming}
           />
           <div className="absolute right-3 flex items-center space-x-2 h-full">
-            <button className="text-gray-500 hover:text-gray-700" title="Attach file">
+            <button className="text-gray-500 hover:text-gray-700" title="Attach file" disabled={streaming}>
               <FiPaperclip size={20} />
             </button>
             <button
               onClick={handleSend}
               className="bg-red-400 text-white p-2 rounded-full hover:bg-red-500 disabled:bg-red-300"
-              disabled={!inputValue.trim()}
+              disabled={!inputValue.trim() || streaming}
             >
               <FiSend size={20} />
             </button>
@@ -244,6 +344,7 @@ const ChatContainer = ({ activeChat, messages = [], onMessagesChange, onSend, on
       </div>
     </div>
   );
+
 };
 
 export default ChatContainer;

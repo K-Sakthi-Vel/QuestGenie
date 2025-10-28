@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { usePdf } from "../../contexts/PdfContext";
+import { getPdf } from '../../utils/idbHelper'; // Import getPdf
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
 /**
  * Entire card is clickable (anchor wraps the layout).
@@ -57,15 +60,14 @@ const VideoCard = ({ video }) => {
   );
 };
 
-export default function YouTubeVideosPanel({ pdfUrl }) {
-  const { activeFile } = usePdf();
+export default function YouTubeVideosPanel({ pdfFile, useMockData }) { // Receive pdfFile and useMockData
   const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const getCacheKey = useCallback(
-    () => `youtube_suggestions_${activeFile?.id || "no_url"}`,
-    [activeFile]
+    () => `youtube_suggestions_${pdfFile?.id || "no_file"}`,
+    [pdfFile]
   );
 
   useEffect(() => {
@@ -80,11 +82,11 @@ export default function YouTubeVideosPanel({ pdfUrl }) {
       setVideos([]);
     }
     setError(null);
-  }, [pdfUrl, getCacheKey]);
+  }, [pdfFile, getCacheKey]);
 
   const fetchYouTubeSuggestions = async () => {
-    if (!pdfUrl) {
-      setError("No PDF URL provided.");
+    if (!pdfFile || !pdfFile.blobKey) {
+      setError("No PDF file provided.");
       return;
     }
 
@@ -92,14 +94,18 @@ export default function YouTubeVideosPanel({ pdfUrl }) {
     setError(null);
 
     try {
-      const response = await fetch(pdfUrl);
-      if (!response.ok) throw new Error("Failed to fetch PDF.");
-      const blob = await response.blob();
+      const pdfData = await getPdf(pdfFile.blobKey);
+      const pdfBlob = pdfData?.blob;
+      if (!pdfBlob) {
+        throw new Error("Failed to retrieve PDF file from IndexedDB.");
+      }
+
       const formData = new FormData();
-      formData.append("file", blob, "document.pdf");
+      formData.append("file", pdfBlob, pdfFile.title || "document.pdf");
+      formData.append("useMockData", useMockData); // Pass the mock data flag
 
       const suggestionsResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/youtube-suggestions`,
+        `${BACKEND_URL}/api/youtube-suggestions`, // Always call the main endpoint
         {
           method: "POST",
           body: formData,
